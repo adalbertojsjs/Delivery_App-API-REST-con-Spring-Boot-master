@@ -9,17 +9,7 @@ El proyecto está pensado como práctica backend y para portafolio, aplicando bu
 
  Arquitectura del Proyecto
 
-El proyecto sigue una arquitectura en capas:
-
-Controller → Maneja las peticiones HTTP (REST)
-
-Service → Contiene la lógica de negocio
-
-Repository → Acceso a base de datos con JPA
-
-Model (Entity) → Entidades mapeadas a la base de datos
-
-Enum → Estados del sistema (pedido, producto, restaurante)      
+El proyecto sigue una arquitectura Hexagonal
 
 -------------------------------------------------------------------------
 
