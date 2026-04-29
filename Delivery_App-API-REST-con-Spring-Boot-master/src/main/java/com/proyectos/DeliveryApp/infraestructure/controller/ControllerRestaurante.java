@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/v1/restaurantes")
+@RequestMapping("/v2/restaurantes")
     public class ControllerRestaurante {
 
         private final ServiceRestaurante service;

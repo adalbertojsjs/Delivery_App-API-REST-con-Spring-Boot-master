@@ -39,16 +39,12 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido crear(Pedido pedido) {
-        //  Validar cliente
-        Long clienteId = pedido.getId();
 
-        Usuario cliente = usuarioRepository.findById(clienteId)
-                .orElseThrow(() -> new UsuarioNoEncontradoException(clienteId));
+        Usuario cliente = usuarioRepository.findById(pedido.getClienteId())
+                .orElseThrow(() -> new UsuarioNoEncontradoException(pedido.getClienteId()));
 
-        // Asignar cliente persistido
         pedido.setClienteId(cliente.getId());
 
-        // Valores por defecto
         pedido.setFecha(LocalDateTime.now());
         pedido.setEstadoPedido(EstadoPedido.ACEPTADO);
 
@@ -77,7 +73,6 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = repository.findById(id).
                 orElseThrow(() -> new PedidoNoEncontradoException(id));
 
-        //Evitar que cambien un pedido finalizado
         if(pedido.getEstadoPedido() == EstadoPedido.ENTREGADO ||
                 pedido.getEstadoPedido() == EstadoPedido.CANCELADO){
             throw  new IllegalStateException("El estado no se puede modificar una vez este finalizado");
