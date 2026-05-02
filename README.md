@@ -25,7 +25,7 @@ Spring Data JPA
 
 Hibernate
 
-Jackson
+Json
 
 MySQL / H2
 
@@ -95,34 +95,33 @@ CERRADO
 
  Endpoints Principales (URLs)
  Usuarios
-POST   /api/usuarios
-GET    /api/usuarios
-GET    /api/usuarios/{id}
-DELETE /api/usuarios/{id}
+Usuarios
+POST   /api/v2/usuarios
+GET    /api/v2/usuarios
+GET    /api/v2/usuarios/{id}
 
- Restaurantes
-POST   /api/restaurantes
-GET    /api/restaurantes
-GET    /api/restaurantes/{id}
-DELETE /api/restaurantes/{id}
+Restaurantes
+POST   /api/v2/restaurantes
+GET    /api/v2/restaurantes
+GET    /api/v2/restaurantes/{id}
+DELETE /api/v2/restaurantes/{id}
 
- Productos
-POST   /api/productos
-GET    /api/productos
-GET    /api/productos/{id}
-DELETE /api/productos/{id}
+Productos
+POST   /api/v2/productos
+GET    /api/v2/productos
+GET    /api/v2/productos/{id}
+DELETE /api/v2/productos/{id}
 
- Repartidores
-POST   /api/repartidores
-GET    /api/repartidores
-GET    /api/repartidores/{id}
-DELETE /api/repartidores/{id}
+Repartidores
+POST   /api/v2/repartidores
+GET    /api/v2/repartidores
+GET    /api/v2/repartidores/{id}
 
  Pedidos
-POST   /api/pedidos
-GET    /api/pedidos
-GET    /api/pedidos/{id}
-DELETE /api/pedidos/{id}
+POST   /api/v2/pedidos
+GET    /api/v2/pedidos
+GET    /api/v2/pedidos/{id}
+DELETE /api/v2/pedidos/{id}
 ----------------------------------------------------------------------------------------
  Ejemplo de JSON para crear un Pedido
 {
@@ -191,11 +190,11 @@ CANCELADO
 ------------------------------------------------------------------------------------
 ## Endpoints principales
 
-- /api/usuarios
-- /api/restaurantes
-- /api/productos
-- /api/repartidores
-- /api/pedidos
+- /api/v2/usuarios
+- /api/v2/restaurantes
+- /api/v2/productos
+- /api/v2/repartidores
+- /api/v2/pedidos
 
 
 -----------------------------------------------------------------------------------
@@ -219,10 +218,7 @@ spring.jpa.show-sql=true
 
 ## Mejoras futuras
 - Autenticación con JWT
-- Roles y permisos
 - Paginación
-- Validaciones con Bean Validation
-- Documentación con Swagger
 
 
  Proyecto desarrollado con fines educativos y de portafolio.
