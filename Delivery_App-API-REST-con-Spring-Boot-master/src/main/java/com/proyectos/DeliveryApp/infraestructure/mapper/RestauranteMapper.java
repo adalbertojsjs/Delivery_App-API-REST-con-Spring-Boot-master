@@ -2,6 +2,7 @@ package com.proyectos.DeliveryApp.infraestructure.mapper;
 
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.RestauranteRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.RestauranteResponse;
 import org.springframework.stereotype.Component;
 
@@ -32,14 +33,13 @@ public class RestauranteMapper {
         return entity;
     }
 
-    public Restaurante responseToDomain(RestauranteResponse response){
+    public Restaurante requestToDomain(RestauranteRequest request){
 
         var domain = Restaurante.
                 builder().
-                id(response.getId()).
-                nombre(response.getNombre()).
-                direccion(response.getDireccion()).
-                estado(response.getEstado()).
+                nombre(request.getNombre()).
+                direccion(request.getDireccion()).
+                estado(request.getEstado()).
                 build();
 
         return domain;

@@ -42,7 +42,6 @@ public class ProductoServiceImpl implements ProductoService {
             throw new IllegalArgumentException("El restaurante es obligatorio");
         }
 
-
         return productoRepository.save(producto);
 
     }

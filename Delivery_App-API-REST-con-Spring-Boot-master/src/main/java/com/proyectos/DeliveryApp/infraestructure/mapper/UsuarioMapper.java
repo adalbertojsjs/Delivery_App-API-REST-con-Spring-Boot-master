@@ -2,6 +2,7 @@ package com.proyectos.DeliveryApp.infraestructure.mapper;
 
 import com.proyectos.DeliveryApp.domain.model.Usuario;
 import com.proyectos.DeliveryApp.infraestructure.entity.UsuarioEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.UsuarioRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.UsuarioResponse;
 import org.springframework.stereotype.Component;
 
@@ -35,14 +36,14 @@ public class UsuarioMapper {
             return entity;
         }
 
-        public Usuario responseToDomain(UsuarioResponse response){
+        public Usuario requestToDomain(UsuarioRequest request){
 
             var domain = Usuario.
                     builder().
-                    id(response.getId()).
-                    nombre(response.getNombre()).
-                    email(response.getEmail()).
-                    rol(response.getRol()).
+                    nombre(request.getNombre()).
+                    email(request.getEmail()).
+                    contrasena(request.getContrasena()).
+                    rol(request.getRol()).
                     build();
 
             return domain;

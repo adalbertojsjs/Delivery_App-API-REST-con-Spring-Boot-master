@@ -2,6 +2,7 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.domain.ports.in.ServiceRestaurante;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.RestauranteRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.RestauranteResponse;
 import com.proyectos.DeliveryApp.infraestructure.mapper.RestauranteMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,8 +41,8 @@ import java.util.List;
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno  del sistema ")})
     @PostMapping
-    public ResponseEntity<RestauranteResponse> crear(@RequestBody Restaurante restaurante){
-        var domain = service.crear(restaurante);
+    public ResponseEntity<RestauranteResponse> crear(@RequestBody RestauranteRequest request){
+        var domain = service.crear(mapper.requestToDomain(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToResponse(domain));
     }
 

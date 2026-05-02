@@ -91,11 +91,9 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("El ID del repartidor es obligatorio");
         }
 
-        // Buscar pedido
         Pedido pedido = repository.findById(pedidoId)
                 .orElseThrow(() -> new PedidoNoEncontradoException(pedidoId));
 
-        // Validar estado del pedido
         if (pedido.getEstadoPedido() == EstadoPedido.CANCELADO ||
                 pedido.getEstadoPedido() == EstadoPedido.ENTREGADO) {
             throw new IllegalStateException("No se puede asignar repartidor a un pedido finalizado");
@@ -146,7 +144,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public List<Pedido> obtenerPorEstado(EstadoPedido estado) {
-
         if (estado == null){
         throw new IllegalArgumentException("El ESTADO del pedido es obligatorio");
         }

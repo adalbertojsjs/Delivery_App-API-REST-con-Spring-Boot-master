@@ -3,6 +3,7 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import com.proyectos.DeliveryApp.domain.model.Pedido;
 import com.proyectos.DeliveryApp.domain.ports.in.PedidoService;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.PedidoRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.PedidoResponse;
 import com.proyectos.DeliveryApp.infraestructure.mapper.PedidoMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,8 +43,8 @@ public class ControllerPedido {
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno  del sistema ")})
     @PostMapping
-    public ResponseEntity<PedidoResponse> crear(@RequestBody Pedido pedido){
-        var domain = service.crear(pedido);
+    public ResponseEntity<PedidoResponse> crear(@RequestBody PedidoRequest request){
+        var domain = service.crear(mapper.requestToDomain(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToResponse(domain));//201
     }
 

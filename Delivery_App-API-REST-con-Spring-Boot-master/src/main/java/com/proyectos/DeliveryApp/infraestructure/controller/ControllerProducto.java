@@ -4,6 +4,7 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 import com.proyectos.DeliveryApp.domain.model.Producto;
 import com.proyectos.DeliveryApp.domain.enums.Disponible;
 import com.proyectos.DeliveryApp.domain.ports.in.ProductoService;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.ProductoRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.ProductoResponse;
 import com.proyectos.DeliveryApp.infraestructure.mapper.ProductoMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,8 +47,8 @@ public class ControllerProducto {
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno  del sistema ")})
     @PostMapping
-    public ResponseEntity<ProductoResponse> crear(@RequestBody Producto producto){
-        var domain = service.crear(producto);
+    public ResponseEntity<ProductoResponse> crear(@RequestBody ProductoRequest request){
+        var domain = service.crear(mapper.requestToDomain(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToRespose(domain));//201
     }
 

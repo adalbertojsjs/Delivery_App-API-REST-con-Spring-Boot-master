@@ -4,6 +4,7 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 import com.proyectos.DeliveryApp.domain.model.Usuario;
 import com.proyectos.DeliveryApp.domain.enums.Rol;
 import com.proyectos.DeliveryApp.domain.ports.in.UsuarioService;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.UsuarioRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.UsuarioResponse;
 import com.proyectos.DeliveryApp.infraestructure.mapper.UsuarioMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,8 +43,8 @@ public class ControllerUsuario {
             @ApiResponse(responseCode = "400" , description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor"),})
     @PostMapping
-    public ResponseEntity<UsuarioResponse> crear(@RequestBody Usuario usuario){
-        var domain = service.crear(usuario);
+    public ResponseEntity<UsuarioResponse> crear(@RequestBody UsuarioRequest request){
+        var domain = service.crear(mapper.requestToDomain(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToResponse(domain));
 
     }

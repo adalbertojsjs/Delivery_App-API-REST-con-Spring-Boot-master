@@ -3,6 +3,8 @@ package com.proyectos.DeliveryApp.infraestructure.mapper;
 import com.proyectos.DeliveryApp.domain.model.Producto;
 import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
 import com.proyectos.DeliveryApp.infraestructure.entity.ProductoEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.PedidoRequest;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.ProductoRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.ProductoResponse;
 import org.springframework.stereotype.Component;
 
@@ -44,15 +46,14 @@ public class ProductoMapper {
             return entity;
         }
 
-        public Producto respomseToDomain(ProductoResponse response){
+        public Producto requestToDomain(ProductoRequest request){
 
          var domain = Producto.
                  builder().
-                 id(response.getId()).
-                 nombre(response.getNombre()).
-                 precio(response.getPrecio()).
-                 disponible(response.getDisponible()).
-                 restauranteId(response.getRestauranteId()).
+                 nombre(request.getNombre()).
+                 precio(request.getPrecio()).
+                 disponible(request.getDisponible()).
+                 restauranteId(request.getRestauranteId()).
                  build();
 
          return domain;

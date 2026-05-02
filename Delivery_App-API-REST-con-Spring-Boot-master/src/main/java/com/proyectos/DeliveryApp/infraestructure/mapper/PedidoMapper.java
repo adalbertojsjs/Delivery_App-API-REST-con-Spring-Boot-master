@@ -4,6 +4,7 @@ import com.proyectos.DeliveryApp.domain.model.Pedido;
 import com.proyectos.DeliveryApp.infraestructure.entity.PedidoEntity;
 import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
 import com.proyectos.DeliveryApp.infraestructure.entity.UsuarioEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.request.PedidoRequest;
 import com.proyectos.DeliveryApp.infraestructure.http.dto.response.PedidoResponse;
 import org.springframework.stereotype.Component;
 
@@ -55,21 +56,19 @@ public class PedidoMapper {
         return entity;
     }
 
-    public Pedido responseToDomain(PedidoResponse response){
+    public Pedido requestToDomain(PedidoRequest request){
 
         var pedido = Pedido.
                 builder().
-                id(response.getId()).
-                fecha(response.getFecha()).
-                total(response.getTotal()).
-                estadoPedido(response.getEstado()).
-                clienteId(response.getClienteId()).
-                repartidorId(response.getRepartidorId()).
-                restauranteId(response.getRestauranteId()).
+                total(request.getTotal()).
+                clienteId(request.getClienteId()).
+                repartidorId(request.getRepartidorId()).
+                restauranteId(request.getRestauranteId()).
                 build();
 
         return  pedido;
     }
+
 
     public PedidoResponse domainToResponse(Pedido pedido){
 
