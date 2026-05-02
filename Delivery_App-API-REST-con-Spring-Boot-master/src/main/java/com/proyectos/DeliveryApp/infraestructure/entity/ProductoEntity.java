@@ -3,6 +3,7 @@ package com.proyectos.DeliveryApp.infraestructure.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.proyectos.DeliveryApp.domain.enums.Disponible;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
 @Table(name = "productos")
 public class ProductoEntity {
 
@@ -37,13 +39,5 @@ public class ProductoEntity {
 
     public ProductoEntity(){
 
-    }
-
-    public ProductoEntity(Long id, String nombre, BigDecimal precio, Disponible disponible, RestauranteEntity restaurante) {
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.disponible = disponible;
-        this.restaurante = restaurante;
     }
 }

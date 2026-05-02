@@ -2,12 +2,14 @@ package com.proyectos.DeliveryApp.infraestructure.entity;
 
 import com.proyectos.DeliveryApp.domain.enums.Rol;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
 @Table(name = "usuarios")
 public class UsuarioEntity {
 
@@ -28,14 +30,6 @@ public class UsuarioEntity {
     private Rol rol;
 
     public UsuarioEntity() {
-    }
-
-    public UsuarioEntity(Long id, String nombre, String email, String contrasena, Rol rol) {
-        this.id = id;
-        this.nombre = nombre;
-        this.email = email;
-        this.contrasena = contrasena;
-        this.rol = rol;
     }
 }
 

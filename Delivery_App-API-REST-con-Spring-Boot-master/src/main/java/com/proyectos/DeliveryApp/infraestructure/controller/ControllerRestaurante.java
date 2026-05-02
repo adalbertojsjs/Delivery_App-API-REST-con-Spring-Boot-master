@@ -2,11 +2,13 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.domain.ports.in.ServiceRestaurante;
-import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.response.RestauranteResponse;
+import com.proyectos.DeliveryApp.infraestructure.mapper.RestauranteMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v2/restaurantes")
     public class ControllerRestaurante {
 
         private final ServiceRestaurante service;
-
-        public ControllerRestaurante(ServiceRestaurante service){
-            this.service = service;
-        }
+        private final RestauranteMapper mapper;
 
 
     // LISTAR
@@ -40,8 +40,9 @@ import java.util.List;
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno  del sistema ")})
     @PostMapping
-    public ResponseEntity<Restaurante> crear(@RequestBody Restaurante restaurante){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(restaurante));
+    public ResponseEntity<RestauranteResponse> crear(@RequestBody Restaurante restaurante){
+        var domain = service.crear(restaurante);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToResponse(domain));
     }
 
     // ACTUALIZAR
@@ -51,9 +52,9 @@ import java.util.List;
             @ApiResponse(responseCode = "404", description = "ID no encontrado"),
             @ApiResponse(responseCode = "500" , description = "Error interno del sistema")})
     @PutMapping("/{id}")
-    public ResponseEntity<Restaurante> actualizar(@PathVariable Long id,
-                                                        @RequestBody Restaurante restaurante){
-        return ResponseEntity.ok(service.actualizar(id, restaurante));
+    public ResponseEntity<RestauranteResponse> actualizar(@PathVariable Long id, @RequestBody Restaurante restaurante){
+        var domain = service.actualizar(id, restaurante);
+        return ResponseEntity.ok(mapper.domainToResponse(domain));
     }
 
     // ELIMINAR

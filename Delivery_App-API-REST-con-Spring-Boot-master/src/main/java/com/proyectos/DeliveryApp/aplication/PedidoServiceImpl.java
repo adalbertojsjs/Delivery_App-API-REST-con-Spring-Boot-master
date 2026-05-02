@@ -101,21 +101,16 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalStateException("No se puede asignar repartidor a un pedido finalizado");
         }
 
-        // Validar que no tenga repartidor
         if (pedido.getRepartidorId() != null) {
             throw new IllegalStateException("El pedido ya tiene repartidor asignado");
         }
 
-        // Buscar repartidor
         Usuario repartidor = usuarioRepository.findById(repartidorId)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(repartidorId));
 
-        // Validar rol (que el usuario sea repartidor)
         if (repartidor.getRol() != Rol.REPARTIDOR) {
             throw new IllegalStateException("El usuario no es repartidor");
         }
-
-        // Asignar repartidor
         pedido.setRepartidorId(repartidor.getId());
         pedido.setEstadoPedido(EstadoPedido.EN_CAMINO);
 
@@ -128,7 +123,6 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("El ID del cliente es obligatorio");
         }
 
-        //Verifica que exista un cliente con es ID
         if (!usuarioRepository.existsById(clienteId)){
             throw new UsuarioNoEncontradoException(clienteId);
         }
@@ -143,7 +137,6 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("El ID del restaurante es obligatorio");
         }
 
-        //Verifica que exista un restaurante con es ID
         if (!restauranteRepository.existsById(restauranteId)){
             throw new RestauranteNoEncontradoException(restauranteId);
         }

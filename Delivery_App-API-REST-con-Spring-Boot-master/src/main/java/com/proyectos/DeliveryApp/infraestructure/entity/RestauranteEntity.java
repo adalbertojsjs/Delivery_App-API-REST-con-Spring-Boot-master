@@ -3,6 +3,7 @@ package com.proyectos.DeliveryApp.infraestructure.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proyectos.DeliveryApp.domain.enums.EstadoRestaurante;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
 @Table(name = "restaurantes")
 public class RestauranteEntity {
 

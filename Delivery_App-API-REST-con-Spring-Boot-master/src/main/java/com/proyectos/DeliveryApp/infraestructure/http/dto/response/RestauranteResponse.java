@@ -1,7 +1,8 @@
-package com.proyectos.DeliveryApp.infraestructure.http.dto;
+package com.proyectos.DeliveryApp.infraestructure.http.dto.response;
 
 import com.proyectos.DeliveryApp.domain.enums.EstadoRestaurante;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RestauranteDTO {
+@Builder
+
+public class RestauranteResponse {
 
     private Long id;
     private  String nombre;

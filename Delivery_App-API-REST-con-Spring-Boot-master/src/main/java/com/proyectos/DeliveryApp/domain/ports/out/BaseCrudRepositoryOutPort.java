@@ -9,7 +9,7 @@ public interface BaseCrudRepositoryOutPort<T, ID>{
 
     Optional<T> findById(ID id);
 
-    List<T> findAll();
+    List<T> findAll();  
 
     void deleteById(ID id);
 

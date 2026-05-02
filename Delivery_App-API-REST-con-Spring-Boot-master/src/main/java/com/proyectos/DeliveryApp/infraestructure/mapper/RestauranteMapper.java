@@ -2,12 +2,12 @@ package com.proyectos.DeliveryApp.infraestructure.mapper;
 
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.response.RestauranteResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RestauranteMapper {
 
-    // ENTITY ➜ DOMAIN
     public Restaurante toDomain(RestauranteEntity entity) {
         if (entity == null) return null;
 
@@ -19,7 +19,6 @@ public class RestauranteMapper {
                 .build();
     }
 
-    // DOMAIN ➜ ENTITY
     public RestauranteEntity toEntity(Restaurante domain) {
         if (domain == null) return null;
 
@@ -31,5 +30,30 @@ public class RestauranteMapper {
         entity.setEstado(domain.getEstado());
 
         return entity;
+    }
+
+    public Restaurante responseToDomain(RestauranteResponse response){
+
+        var domain = Restaurante.
+                builder().
+                id(response.getId()).
+                nombre(response.getNombre()).
+                direccion(response.getDireccion()).
+                estado(response.getEstado()).
+                build();
+
+        return domain;
+    }
+
+    public RestauranteResponse domainToResponse(Restaurante restaurante){
+
+        var response = RestauranteResponse.
+                builder().
+                id(restaurante.getId()).
+                nombre(restaurante.getNombre()).
+                direccion(restaurante.getDireccion()).
+                estado(restaurante.getEstado()).
+                build();
+        return response;
     }
 }

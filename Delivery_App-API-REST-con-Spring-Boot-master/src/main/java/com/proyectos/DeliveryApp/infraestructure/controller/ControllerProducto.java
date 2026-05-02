@@ -2,30 +2,30 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 
 
 import com.proyectos.DeliveryApp.domain.model.Producto;
-import com.proyectos.DeliveryApp.infraestructure.http.dto.ProductoDTO;
 import com.proyectos.DeliveryApp.domain.enums.Disponible;
-import com.proyectos.DeliveryApp.infraestructure.entity.ProductoEntity;
 import com.proyectos.DeliveryApp.domain.ports.in.ProductoService;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.response.ProductoResponse;
 import com.proyectos.DeliveryApp.infraestructure.mapper.ProductoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v2/productos")
 public class ControllerProducto {
 
     private final ProductoService service;
 
-    public ControllerProducto(ProductoService service){
-        this.service = service;
-    }
+    private final ProductoMapper mapper;
+
 
 
     @Operation(summary = "Lista de productos",
@@ -46,10 +46,10 @@ public class ControllerProducto {
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno  del sistema ")})
     @PostMapping
-    public ResponseEntity<Producto> crear(@RequestBody Producto producto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(producto));//201
+    public ResponseEntity<ProductoResponse> crear(@RequestBody Producto producto){
+        var domain = service.crear(producto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToRespose(domain));//201
     }
-
 
 
     @Operation(summary = "Actualizar disponibilidad del producto",
@@ -59,9 +59,9 @@ public class ControllerProducto {
             @ApiResponse(responseCode = "404", description = "ID no encontrado"),
             @ApiResponse(responseCode = "500" , description = "Error interno del sistema")})
     @PatchMapping("/{id}/disponible")
-    public ResponseEntity<Producto> actualizarDisponibilidad(@PathVariable Long id,
-                                                                   @RequestParam Disponible disponible){
-        return ResponseEntity.ok().body(service.cambiarDisponibilidad(id,disponible));
+    public ResponseEntity<ProductoResponse> actualizarDisponibilidad(@PathVariable Long id,@RequestParam Disponible disponible){
+        var domain = service.cambiarDisponibilidad(id,disponible);
+        return ResponseEntity.ok().body(mapper.domainToRespose(domain));
     }
 
     @Operation(summary = "Producto por ID")
@@ -69,10 +69,9 @@ public class ControllerProducto {
             @ApiResponse(responseCode = "500", description = "Error interno del sistema"),
             @ApiResponse(responseCode = "404", description = "ID no encontrado")})
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> buscarId(
-            @Parameter(description = "Id del producto", example = "1") @PathVariable Long id){
-        Producto producto = service.buscarPorId(id);
-        return ResponseEntity.ok(producto);
+    public ResponseEntity<ProductoResponse> buscarId(@Parameter(description = "Id del producto", example = "1") @PathVariable Long id){
+        var producto = service.buscarPorId(id);
+        return ResponseEntity.ok(mapper.domainToRespose(producto));
     }
 
 

@@ -1,7 +1,8 @@
-package com.proyectos.DeliveryApp.infraestructure.http.dto;
+package com.proyectos.DeliveryApp.infraestructure.http.dto.response;
 
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,15 +12,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PedidoDTO {
+@Builder
+public class PedidoResponse {
 
     private Long id;
     private LocalDateTime fecha;
     private BigDecimal total;
     private EstadoPedido estado;
-
-    private UsuarioDTO cliente;
-    private UsuarioDTO repartidor;
-    private RestauranteDTO restaurante;
-
+    private Long clienteId;
+    private Long repartidorId;
+    private Long restauranteId;
 }

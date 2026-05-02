@@ -4,6 +4,7 @@ import com.proyectos.DeliveryApp.domain.model.Pedido;
 import com.proyectos.DeliveryApp.infraestructure.entity.PedidoEntity;
 import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
 import com.proyectos.DeliveryApp.infraestructure.entity.UsuarioEntity;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.response.PedidoResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,5 +53,42 @@ public class PedidoMapper {
         }
 
         return entity;
+    }
+
+    public Pedido responseToDomain(PedidoResponse response){
+
+        var pedido = Pedido.
+                builder().
+                id(response.getId()).
+                fecha(response.getFecha()).
+                total(response.getTotal()).
+                estadoPedido(response.getEstado()).
+                clienteId(response.getClienteId()).
+                repartidorId(response.getRepartidorId()).
+                restauranteId(response.getRestauranteId()).
+                build();
+
+        return  pedido;
+    }
+
+    public PedidoResponse domainToResponse(Pedido pedido){
+
+        var response = PedidoResponse.
+                builder().
+                id(pedido.getId()).
+                fecha(pedido.getFecha()).
+                total(pedido.getTotal()).
+                estado(pedido.getEstadoPedido()).
+                restauranteId(pedido.getRestauranteId()).
+                build();
+
+        if (pedido.getClienteId() != null){
+            response.setClienteId(pedido.getClienteId());
+        }
+        if (pedido.getRepartidorId() != null){
+            response.setRepartidorId(pedido.getRepartidorId());
+        }
+
+        return response;
     }
 }

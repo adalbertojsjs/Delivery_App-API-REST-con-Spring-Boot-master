@@ -2,26 +2,26 @@ package com.proyectos.DeliveryApp.infraestructure.controller;
 
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import com.proyectos.DeliveryApp.domain.model.Pedido;
-import com.proyectos.DeliveryApp.infraestructure.entity.PedidoEntity;
 import com.proyectos.DeliveryApp.domain.ports.in.PedidoService;
+import com.proyectos.DeliveryApp.infraestructure.http.dto.response.PedidoResponse;
+import com.proyectos.DeliveryApp.infraestructure.mapper.PedidoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v2/pedidos")
 public class ControllerPedido {
 
     private final PedidoService service;
 
-    public ControllerPedido(PedidoService service){
-        this.service = service;
-    }
+    private final PedidoMapper mapper;
 
 
     @Operation(summary = "Lista de pedidos",
@@ -42,10 +42,10 @@ public class ControllerPedido {
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno  del sistema ")})
     @PostMapping
-    public ResponseEntity<Pedido> crear(@RequestBody Pedido pedido){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(pedido));//201
+    public ResponseEntity<PedidoResponse> crear(@RequestBody Pedido pedido){
+        var domain = service.crear(pedido);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.domainToResponse(domain));//201
     }
-
 
 
     @Operation(summary = "Eliminar pedido")
@@ -68,9 +68,9 @@ public class ControllerPedido {
             @ApiResponse(responseCode = "404", description = "ID no encontrado"),
             @ApiResponse(responseCode = "500" , description = "Error interno del sistema")})
     @PatchMapping("/{id}/estadoPedido")
-    public ResponseEntity<Pedido> actualizarEstado(@PathVariable Long id ,
-                                                         @RequestParam EstadoPedido estadoPedido){
-        return ResponseEntity.ok(service.cambiarEstado(id, estadoPedido));
+    public ResponseEntity<PedidoResponse> actualizarEstado(@PathVariable Long id , @RequestParam EstadoPedido estadoPedido){
+        var domain = service.cambiarEstado(id, estadoPedido);
+        return ResponseEntity.ok(mapper.domainToResponse(domain));
     }
 
 
@@ -83,14 +83,11 @@ public class ControllerPedido {
             @ApiResponse(responseCode = "404", description = "ID no encontrado"),
             @ApiResponse(responseCode = "500" , description = "Error interno del sistema")})
     @PatchMapping("/{id}/repartidor")
-    public ResponseEntity<Pedido> asignarPedido(@PathVariable Long id
-            , @RequestParam Long repartidor){
-
-        //respuesta http  -  el cuerpo de la respuesta
-        return ResponseEntity.ok().body(service.asignarRepartidor(id, repartidor));//200.ok
+    public ResponseEntity<PedidoResponse> asignarPedido(@PathVariable Long id, @RequestParam Long repartidor){
+        var domain = service.asignarRepartidor(id, repartidor);
+        return ResponseEntity.ok().body(mapper.domainToResponse(domain));//200.ok
 
     }
-
 
 
     @Operation(summary = "Pedido por restaurante",description = "Retorna los pedidos de X restaurante")
@@ -128,10 +125,9 @@ public class ControllerPedido {
             @ApiResponse(responseCode = "500", description = "Error interno del sistema"),
             @ApiResponse(responseCode = "404", description = "Pedido no encontrado con ese ID")})
     @GetMapping("/{id}")
-    public ResponseEntity<Pedido> buscarPorId(@PathVariable Long id) {
-        Pedido pedido = service.buscarPorId(id);
-//        PedidoDTO pedidoDTO = PedidoMapper.toDTO(pedido);/TODO agregar los dto ya arrreglados
-        return ResponseEntity.ok(pedido);//200.ok
+    public ResponseEntity<PedidoResponse> buscarPorId(@PathVariable Long id) {
+        var pedido = service.buscarPorId(id);
+        return ResponseEntity.ok(mapper.domainToResponse(pedido));//200.ok
     }
 
     //URL para llamar los metodos
