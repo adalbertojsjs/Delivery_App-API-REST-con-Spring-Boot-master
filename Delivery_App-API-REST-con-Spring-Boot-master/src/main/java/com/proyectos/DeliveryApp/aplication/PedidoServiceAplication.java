@@ -9,11 +9,6 @@ import com.proyectos.DeliveryApp.domain.model.Usuario;
 import com.proyectos.DeliveryApp.domain.ports.out.PedidoRepositoryOutPorts;
 import com.proyectos.DeliveryApp.domain.ports.out.RestauranteRepositoryOutPorts;
 import com.proyectos.DeliveryApp.domain.ports.out.UsuarioRepositoryOutPorts;
-import com.proyectos.DeliveryApp.infraestructure.entity.PedidoEntity;
-import com.proyectos.DeliveryApp.infraestructure.entity.UsuarioEntity;
-import com.proyectos.DeliveryApp.infraestructure.repository.PedidoRepositoryJpa;
-import com.proyectos.DeliveryApp.infraestructure.repository.RestauranteRepositoryJpa;
-import com.proyectos.DeliveryApp.infraestructure.repository.UsuarioRepositoryJpa;
 import com.proyectos.DeliveryApp.domain.enums.Rol;
 import com.proyectos.DeliveryApp.domain.ports.in.PedidoService;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +19,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class PedidoServiceImpl implements PedidoService {
+public class PedidoServiceAplication implements PedidoService {
 
    private final PedidoRepositoryOutPorts repository;
    private final UsuarioRepositoryOutPorts usuarioRepository;
-   private final RestauranteRepositoryOutPorts restauranteRepository;
-
 
     @Override
     public List<Pedido> listar() {
@@ -39,6 +32,19 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido crear(Pedido pedido) {
+
+        if (pedido == null){
+            throw  new IllegalArgumentException("El pedido no puede ser nulo");
+        }
+
+        if (pedido.getClienteId() == null){
+            throw  new IllegalArgumentException("El id del cliente no puede ser nulo");
+
+        }
+        if (pedido.getRestauranteId() == null){
+            throw  new IllegalArgumentException("El id del restaurante no puede ser nulo");
+
+        }
 
         Usuario cliente = usuarioRepository.findById(pedido.getClienteId())
                 .orElseThrow(() -> new UsuarioNoEncontradoException(pedido.getClienteId()));
@@ -96,18 +102,18 @@ public class PedidoServiceImpl implements PedidoService {
 
         if (pedido.getEstadoPedido() == EstadoPedido.CANCELADO ||
                 pedido.getEstadoPedido() == EstadoPedido.ENTREGADO) {
-            throw new IllegalStateException("No se puede asignar repartidor a un pedido finalizado");
+            throw new IllegalArgumentException("No se puede asignar repartidor a un pedido finalizado");
         }
 
         if (pedido.getRepartidorId() != null) {
-            throw new IllegalStateException("El pedido ya tiene repartidor asignado");
+            throw new IllegalArgumentException("El pedido ya tiene repartidor asignado");
         }
 
         Usuario repartidor = usuarioRepository.findById(repartidorId)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(repartidorId));
 
         if (repartidor.getRol() != Rol.REPARTIDOR) {
-            throw new IllegalStateException("El usuario no es repartidor");
+            throw new IllegalArgumentException("El usuario no es repartidor");
         }
         pedido.setRepartidorId(repartidor.getId());
         pedido.setEstadoPedido(EstadoPedido.EN_CAMINO);
@@ -120,11 +126,6 @@ public class PedidoServiceImpl implements PedidoService {
         if(clienteId == null){
             throw new IllegalArgumentException("El ID del cliente es obligatorio");
         }
-
-        if (!usuarioRepository.existsById(clienteId)){
-            throw new UsuarioNoEncontradoException(clienteId);
-        }
-
         return repository.findByClienteId(clienteId);
     }
 
@@ -135,15 +136,12 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("El ID del restaurante es obligatorio");
         }
 
-        if (!restauranteRepository.existsById(restauranteId)){
-            throw new RestauranteNoEncontradoException(restauranteId);
-        }
-
         return repository.findByRestauranteId(restauranteId);
     }
 
     @Override
     public List<Pedido> obtenerPorEstado(EstadoPedido estado) {
+
         if (estado == null){
         throw new IllegalArgumentException("El ESTADO del pedido es obligatorio");
         }
@@ -153,8 +151,10 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido buscarPorId(Long id) {
+        if(id == null){
+            throw new IllegalArgumentException("El ID del pedido es obligatorio");
+        }
         return repository.findById(id)
                 .orElseThrow(() -> new PedidoNoEncontradoException(id));
     }
-
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class ProductoServiceImpl implements ProductoService {
+public class ProductoServiceAplication implements ProductoService {
 
     private  final ProductoRepositoryOutPorts productoRepository;
     private  final RestauranteRepositoryOutPorts restauranteRepository;
@@ -56,7 +56,7 @@ public class ProductoServiceImpl implements ProductoService {
             throw new IllegalArgumentException("El estado de disponibilidad es obligatorio");
         }
 
-        Producto producto =  productoRepository.findById(id).
+        var producto =  productoRepository.findById(id).
                 orElseThrow(() -> new ProductoNoEncontrado(id));
 
         producto.setDisponible(disponible);

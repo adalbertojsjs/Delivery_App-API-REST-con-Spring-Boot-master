@@ -3,8 +3,6 @@ package com.proyectos.DeliveryApp.aplication;
 import com.proyectos.DeliveryApp.domain.Exception.UsuarioNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.model.Usuario;
 import com.proyectos.DeliveryApp.domain.ports.out.UsuarioRepositoryOutPorts;
-import com.proyectos.DeliveryApp.infraestructure.entity.UsuarioEntity;
-import com.proyectos.DeliveryApp.infraestructure.repository.UsuarioRepositoryJpa;
 import com.proyectos.DeliveryApp.domain.enums.Rol;
 import com.proyectos.DeliveryApp.domain.ports.in.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class UsuarioServiceImpl implements UsuarioService {
+public class UsuarioServiceAplication implements UsuarioService {
 
   private final UsuarioRepositoryOutPorts usuarioRepository;
 

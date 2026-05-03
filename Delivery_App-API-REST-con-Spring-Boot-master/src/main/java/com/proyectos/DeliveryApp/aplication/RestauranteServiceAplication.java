@@ -3,8 +3,6 @@ package com.proyectos.DeliveryApp.aplication;
 import com.proyectos.DeliveryApp.domain.Exception.RestauranteNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.domain.ports.out.RestauranteRepositoryOutPorts;
-import com.proyectos.DeliveryApp.infraestructure.entity.RestauranteEntity;
-import com.proyectos.DeliveryApp.infraestructure.repository.RestauranteRepositoryJpa;
 import com.proyectos.DeliveryApp.domain.ports.in.ServiceRestaurante;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class RestauranteServiceImpl implements ServiceRestaurante {
+public class RestauranteServiceAplication implements ServiceRestaurante {
 
     private final RestauranteRepositoryOutPorts repository;
 
