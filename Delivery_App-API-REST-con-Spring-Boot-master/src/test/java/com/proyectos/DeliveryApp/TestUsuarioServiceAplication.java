@@ -51,6 +51,9 @@ public class TestUsuarioServiceAplication {
         when(repository.findAll()).thenReturn(lista);
 
         var result = aplication.listar();
+
+        log.info("Cantidad de resultados: {}", result.size());
+
         assertNotNull(result);
         assertEquals("Random444",result.getFirst().getEmail());
         assertEquals("Random44554", result.getLast().getEmail());
@@ -77,7 +80,6 @@ public class TestUsuarioServiceAplication {
         assertNotNull(result);
         assertEquals("Random344", result.getNombre());
         assertEquals("Random44554", result.getEmail());
-
 
         verify(repository).save(user);
     }

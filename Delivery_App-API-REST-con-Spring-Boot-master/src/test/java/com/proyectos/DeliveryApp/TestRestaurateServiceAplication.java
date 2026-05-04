@@ -52,7 +52,9 @@ public class TestRestaurateServiceAplication {
         when(repository.findAll()).thenReturn(lista);
 
         var result = aplication.listar();
-        System.out.println(result.getLast().getNombre());
+        log.info("Cantidad de resultados: {}", result.size());
+
+        log.info(result.getLast().getNombre());
         assertNotNull(result);
         assertEquals(2,result.size());
         assertEquals(EstadoRestaurante.ABIERTO,result.getLast().getEstado());

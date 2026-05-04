@@ -70,6 +70,8 @@ public class TestPedidoServiceAplication {
 
         var result = aplication.listar();
 
+        log.info("Cantidad de resultados: {}", result.size());
+
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(EstadoPedido.CREADO, result.getFirst().getEstadoPedido());

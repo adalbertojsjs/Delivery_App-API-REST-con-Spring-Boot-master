@@ -9,6 +9,7 @@ import com.proyectos.DeliveryApp.domain.model.Producto;
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.domain.ports.out.ProductoRepositoryOutPorts;
 import com.proyectos.DeliveryApp.domain.ports.out.RestauranteRepositoryOutPorts;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 public class TestProductoServiceAplication {
 
@@ -45,8 +47,8 @@ public class TestProductoServiceAplication {
 
         var result = aplication.listar();
 
-        System.out.println(result.size());
 
+        log.info("Cantidad de resultados: {}", result.size());
         assertNotNull(result);
         assertEquals(2,result.size());
 
@@ -69,6 +71,7 @@ public class TestProductoServiceAplication {
 
         var result = aplication.crear(producto);
 
+        log.info(result.getNombre());
         assertEquals("Random333",result.getNombre());
         assertEquals(Disponible.DISPONIBLE,result.getDisponible());
 
@@ -87,7 +90,9 @@ public class TestProductoServiceAplication {
                 restauranteId(1L).
                 build();
 
-        assertThrows(IllegalArgumentException.class, () -> aplication.crear(producto));
+      IllegalArgumentException exception =  assertThrows(IllegalArgumentException.class, () -> aplication.crear(producto));
+
+        log.info(exception.getMessage());
 
         verify(repository, never()).save(any());
 
@@ -104,7 +109,9 @@ public class TestProductoServiceAplication {
                 restauranteId(1L).
                 build();
 
-        assertThrows(IllegalArgumentException.class, ()-> aplication.crear(producto));
+       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, ()-> aplication.crear(producto));
+
+        log.info(exception.getMessage());
 
         verify(repository, never()).save(any());
     }
@@ -114,7 +121,9 @@ public class TestProductoServiceAplication {
          Producto producto = null;
 
         System.out.println(producto);
-        assertThrows(IllegalArgumentException.class, ()-> aplication.crear(producto));
+       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, ()-> aplication.crear(producto));
+
+        log.info(exception.getMessage());
 
         verify(repository, never()).save(any());
     }
@@ -130,7 +139,10 @@ public class TestProductoServiceAplication {
                 restauranteId(null).
                 build();
 
-        assertThrows(IllegalArgumentException.class, ()-> aplication.crear(producto));
+       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+               ()-> aplication.crear(producto));
+
+        log.info(exception.getMessage());
 
         verify(repository, never()).save(any());
     }
@@ -155,7 +167,7 @@ public class TestProductoServiceAplication {
         var result = aplication.cambiarDisponibilidad(id,Disponible.DISPONIBLE);
 
 
-        System.out.println(result.getNombre());
+        log.info(result.getNombre());
         assertNotNull(result);
         assertEquals(BigDecimal.valueOf(778),result.getPrecio());
         assertEquals(1L,result.getRestauranteId());
@@ -171,9 +183,10 @@ public class TestProductoServiceAplication {
 
         Long id = null;
 
-        assertThrows(IllegalArgumentException.class,() ->
+       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,() ->
                 aplication.cambiarDisponibilidad(id , Disponible.DISPONIBLE));
 
+        log.info(exception.getMessage());
         verify(repository, never()).save(any());
     }
 
@@ -183,9 +196,10 @@ public class TestProductoServiceAplication {
       Disponible disponible = null ;
         Long id = 1L;
 
-        assertThrows(IllegalArgumentException.class,() ->
+       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,() ->
                 aplication.cambiarDisponibilidad(id , disponible));
 
+        log.info(exception.getMessage());
         verify(repository, never()).save(any());
     }
 
@@ -222,8 +236,8 @@ public class TestProductoServiceAplication {
 
         var result = aplication.listarPorRestaurante(restaurante.getId());
 
-        System.out.println(result.getLast().getNombre());
-        System.out.println(result.getFirst().getNombre());
+        log.info(result.getLast().getNombre());
+        log.info(result.getFirst().getNombre());
         assertNotNull(result);
         assertEquals("Random333",result.getFirst().getNombre());
         assertEquals("Random444",result.getLast().getNombre());
@@ -244,9 +258,10 @@ public class TestProductoServiceAplication {
                 estado(EstadoRestaurante.ABIERTO).
                 build();
 
-        assertThrows(IllegalArgumentException.class,
+      IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> aplication.listarPorRestaurante(restaurante.getId()));
 
+        log.info(exception.getMessage());
         verify(repository, never()).findByRestauranteId(any());
         verify(restauranteRepositoryOutPorts ,never()).existsById(any());
 
@@ -256,16 +271,10 @@ public class TestProductoServiceAplication {
     void shouldThrowExceptionWhenRestaurantIdDoesNotExist(){
 
         Long id = 4L;
-        var restaurante = Restaurante.
-                builder().
-                id(1L).
-                nombre("Restaurante la buena mesa").
-                direccion("random99").
-                estado(EstadoRestaurante.ABIERTO).
-                build();
+        RestauranteNoEncontradoException exception =
+                assertThrows(RestauranteNoEncontradoException.class,()-> aplication.listarPorRestaurante(id));
 
-        assertThrows(RestauranteNoEncontradoException.class,()-> aplication.listarPorRestaurante(id));
-
+        log.info(exception.getMessage());
         verify(repository, never()).findByRestauranteId(any());
         verify(restauranteRepositoryOutPorts).existsById(id);
 
@@ -291,7 +300,7 @@ public class TestProductoServiceAplication {
 
         var result = aplication.buscarPorId(producto.getId());
 
-        System.out.println(result.getNombre());
+        log.info(result.getNombre());
         assertNotNull(result);
         assertEquals(1L,result.getRestauranteId());
         assertEquals("Random333",result.getNombre());
