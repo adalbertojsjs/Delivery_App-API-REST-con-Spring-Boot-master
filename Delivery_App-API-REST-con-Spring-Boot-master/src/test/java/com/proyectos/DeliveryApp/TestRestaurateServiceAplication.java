@@ -5,6 +5,7 @@ import com.proyectos.DeliveryApp.aplication.RestauranteServiceAplication;
 import com.proyectos.DeliveryApp.domain.enums.EstadoRestaurante;
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.domain.ports.out.RestauranteRepositoryOutPorts;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,11 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 public class TestRestaurateServiceAplication {
 
@@ -69,7 +69,6 @@ public class TestRestaurateServiceAplication {
 
         var restaurante = Restaurante.
                 builder().
-                id(1L).
                 nombre("La buena mesa").
                 direccion("random222").
                 estado(EstadoRestaurante.CERRADO).
@@ -84,8 +83,46 @@ public class TestRestaurateServiceAplication {
         assertEquals("random222", result.getDireccion());
         assertEquals(EstadoRestaurante.CERRADO, result.getEstado());
 
-
         verify(repository).save(restaurante);
+    }
+
+    @Test
+    void shouldThrowExceptionRestaurantIdIsNull(){
+        var restaurante = Restaurante.
+                builder().
+                id(2L).
+                nombre("La buena mesa").
+                direccion("random222").
+                estado(EstadoRestaurante.CERRADO).
+                build();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                ()-> aplication.crear(restaurante));
+
+        log.info(exception.getMessage());
+
+        assertEquals("El id no debe enviarse",exception.getMessage());
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowExceptionStatusRestaurantsNull(){
+        var restaurante = Restaurante.
+                builder().
+                nombre("La buena mesa").
+                direccion("random222").
+                estado(null).
+                build();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                ()-> aplication.crear(restaurante));
+
+        log.info(exception.getMessage());
+
+        assertEquals("No se puede crear un restaurante con estado nulo",exception.getMessage());
+
+        verify(repository,never()).save(any());
     }
 
     //Update Restaurant
@@ -120,6 +157,25 @@ public class TestRestaurateServiceAplication {
         verify(repository).findById(restaurante.getId());
     }
 
+    @Test
+    void shouldThrowExceptionRestaurantIdIsNull_Update(){
+        var restaurante = Restaurante.
+                builder().
+                nombre("La buena mesa").
+                direccion("random222").
+                estado(EstadoRestaurante.CERRADO).
+                build();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                ()-> aplication.actualizar(null,restaurante));
+
+        log.info(exception.getMessage());
+
+        assertEquals("El id no puede ser nulo",exception.getMessage());
+
+        verify(repository, never()).findById(any());
+        verify(repository,never()).save(any());
+    }
 
     //Delete Restaurant
 
@@ -139,7 +195,4 @@ public class TestRestaurateServiceAplication {
           verify(repository).deleteById(restaurante.getId());
 
     }
-
-
-
 }

@@ -7,23 +7,13 @@ El proyecto está pensado como práctica backend y para portafolio, aplicando bu
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 
- Arquitectura del Proyecto
+Arquitectura del Proyecto
 
-El proyecto sigue una arquitectura en capas:
-
-Controller → Maneja las peticiones HTTP (REST)
-
-Service → Contiene la lógica de negocio
-
-Repository → Acceso a base de datos con JPA
-
-Model (Entity) → Entidades mapeadas a la base de datos
-
-Enum → Estados del sistema (pedido, producto, restaurante)      
+El proyecto sigue una arquitectura Hexagonal
 
 -------------------------------------------------------------------------
 
-⚙️ Tecnologías Utilizadas:
+Tecnologías Utilizadas:
 
 Java 21
 
@@ -35,7 +25,7 @@ Spring Data JPA
 
 Hibernate
 
-Jackson
+Json
 
 MySQL / H2
 
@@ -43,8 +33,8 @@ Maven
 
 --------------------------------------------------------------------------------
 
-📦 Entidades Principales
-👤 Usuario
+Entidades Principales
+Usuario
 
 
 ## Roles de Usuario
@@ -58,19 +48,19 @@ El sistema maneja los siguientes roles:
 
 Representa a los clientes del sistema.
 
- Restaurante
+Restaurante
 
 Contiene información básica y una lista de productos asociados.
 
- Producto
+Producto
 
 Pertenece a un restaurante y tiene estado de disponibilidad.
 
- Repartidor
+Repartidor
 
 Usuario encargado de entregar los pedidos.
 
- Pedido
+Pedido
 
 Entidad principal que relaciona:
 
@@ -87,7 +77,7 @@ Fecha
 Total
 ------------------------------------------------------------
 
-🔁 Estados (Enums)
+Estados (Enums)
 EstadoPedido
 PENDIENTE,
 EN_PREPARACION,
@@ -103,48 +93,47 @@ EstadoRestaurante
 ABIERTO,
 CERRADO
 
- Endpoints Principales (URLs)
-📌 Usuarios
-POST   /api/usuarios
-GET    /api/usuarios
-GET    /api/usuarios/{id}
-DELETE /api/usuarios/{id}
+Endpoints Principales (URLs)
+Usuarios
+Usuarios
+POST   /api/v2/usuarios
+GET    /api/v2/usuarios
+GET    /api/v2/usuarios/{id}
 
-📌 Restaurantes
-POST   /api/restaurantes
-GET    /api/restaurantes
-GET    /api/restaurantes/{id}
-DELETE /api/restaurantes/{id}
+Restaurantes
+POST   /api/v2/restaurantes
+GET    /api/v2/restaurantes
+GET    /api/v2/restaurantes/{id}
+DELETE /api/v2/restaurantes/{id}
 
-📌 Productos
-POST   /api/productos
-GET    /api/productos
-GET    /api/productos/{id}
-DELETE /api/productos/{id}
+Productos
+POST   /api/v2/productos
+GET    /api/v2/productos
+GET    /api/v2/productos/{id}
+DELETE /api/v2/productos/{id}
 
-📌 Repartidores
-POST   /api/repartidores
-GET    /api/repartidores
-GET    /api/repartidores/{id}
-DELETE /api/repartidores/{id}
+Repartidores
+POST   /api/v2/repartidores
+GET    /api/v2/repartidores
+GET    /api/v2/repartidores/{id}
 
-📌 Pedidos
-POST   /api/pedidos
-GET    /api/pedidos
-GET    /api/pedidos/{id}
-DELETE /api/pedidos/{id}
+Pedidos
+POST   /api/v2/pedidos
+GET    /api/v2/pedidos
+GET    /api/v2/pedidos/{id}
+DELETE /api/v2/pedidos/{id}
 ----------------------------------------------------------------------------------------
-🧾 Ejemplo de JSON para crear un Pedido
+Ejemplo de JSON para crear un Pedido
 {
-  "fecha": "2026-01-21",
-  "total": 25000,
-  "estadoPedido": "PENDIENTE",
-  "clienteId": 1,
-  "repartidorId": 2,
-  "restauranteId": 3
+"fecha": "2026-01-21",
+"total": 25000,
+"estadoPedido": "PENDIENTE",
+"clienteId": 1,
+"repartidorId": 2,
+"restauranteId": 3
 }
 ----------------------------------------------------------------------------------------------------------
-🔄 Manejo de Relaciones y JSON
+Manejo de Relaciones y JSON
 
 Para evitar ciclos infinitos al listar información, se utilizan:
 
@@ -155,7 +144,7 @@ Para evitar ciclos infinitos al listar información, se utilizan:
 @JsonIgnore
 -------------------------------------------------------------------------------
 
-🚀 Cómo ejecutar el proyecto
+Cómo ejecutar el proyecto
 
 Clonar el repositorio
 
@@ -176,7 +165,7 @@ Probar los endpoints con Postman o Insomnia
 
 --------------------------------------------------------------------------------------
 
-🎯 Objetivo del Proyecto
+Objetivo del Proyecto
 
 Este proyecto fue desarrollado con el objetivo de:
 
@@ -189,7 +178,7 @@ Manejar relaciones JPA
 Aplicar buenas prácticas de programación
 
 -------------------------------------------------------------------------------------
-🔁 Estados (Enums)
+Estados (Enums)
 EstadoPedido
 
 PENDIENTE,
@@ -201,11 +190,11 @@ CANCELADO
 ------------------------------------------------------------------------------------
 ## Endpoints principales
 
-- /api/usuarios
-- /api/restaurantes
-- /api/productos
-- /api/repartidores
-- /api/pedidos
+- /api/v2/usuarios
+- /api/v2/restaurantes
+- /api/v2/productos
+- /api/v2/repartidores
+- /api/v2/pedidos
 
 
 -----------------------------------------------------------------------------------
@@ -229,14 +218,11 @@ spring.jpa.show-sql=true
 
 ## Mejoras futuras
 - Autenticación con JWT
-- Roles y permisos
 - Paginación
-- Validaciones con Bean Validation
-- Documentación con Swagger
 
 
- Proyecto desarrollado con fines educativos y de portafolio.
- Autor Adalberto
+Proyecto desarrollado con fines educativos y de portafolio.
+Autor Adalberto
 
 
 

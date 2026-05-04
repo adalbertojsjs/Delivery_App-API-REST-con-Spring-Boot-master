@@ -21,12 +21,23 @@ public class RestauranteServiceAplication implements ServiceRestaurante {
     }
 
     @Override
-    public Restaurante crear(Restaurante restaurante) {
+    public Restaurante crear(Restaurante restaurante){
+        if (restaurante.getId() != null){
+            throw new IllegalArgumentException("El id no debe enviarse");
+        }
+        if (restaurante.getEstado() == null){
+            throw new IllegalArgumentException("No se puede crear un restaurante con estado nulo");
+        }
         return repository.save(restaurante);
     }
 
     @Override
-    public Restaurante actualizar(Long id, Restaurante restaurante) {
+    public Restaurante actualizar(Long id, Restaurante restaurante){
+
+        if (id == null){
+            throw new IllegalArgumentException("El id no puede ser nulo");
+        }
+
         Restaurante restauranteExistente = repository.findById(id)
                 .orElseThrow(() -> new RestauranteNoEncontradoException(id));
 

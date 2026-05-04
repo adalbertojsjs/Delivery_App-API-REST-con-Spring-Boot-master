@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface BaseCrudRepositoryOutPort<T, ID>{
 
-    T save(T entity);
+    T save(T model);
 
     Optional<T> findById(ID id);
 
