@@ -28,6 +28,7 @@ public class PedidoEntity {
     private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "estado_pedido")
     private EstadoPedido estadoPedido;
 
     @ManyToOne

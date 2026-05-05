@@ -2,7 +2,6 @@ package com.proyectos.DeliveryApp.domain.ports.in;
 
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import com.proyectos.DeliveryApp.domain.model.Pedido;
-import com.proyectos.DeliveryApp.infraestructure.entity.PedidoEntity;
 
 import java.util.List;
 

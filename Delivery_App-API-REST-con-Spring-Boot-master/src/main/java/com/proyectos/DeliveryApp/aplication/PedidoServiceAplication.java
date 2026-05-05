@@ -1,13 +1,11 @@
 package com.proyectos.DeliveryApp.aplication;
 
 import com.proyectos.DeliveryApp.domain.Exception.PedidoNoEncontradoException;
-import com.proyectos.DeliveryApp.domain.Exception.RestauranteNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.Exception.UsuarioNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import com.proyectos.DeliveryApp.domain.model.Pedido;
 import com.proyectos.DeliveryApp.domain.model.Usuario;
 import com.proyectos.DeliveryApp.domain.ports.out.PedidoRepositoryOutPorts;
-import com.proyectos.DeliveryApp.domain.ports.out.RestauranteRepositoryOutPorts;
 import com.proyectos.DeliveryApp.domain.ports.out.UsuarioRepositoryOutPorts;
 import com.proyectos.DeliveryApp.domain.enums.Rol;
 import com.proyectos.DeliveryApp.domain.ports.in.PedidoService;
@@ -87,6 +85,7 @@ public class PedidoServiceAplication implements PedidoService {
         pedido.setEstadoPedido(estado);
         return repository.save(pedido);
     }
+
 
     @Override
     public Pedido asignarRepartidor(Long pedidoId, Long repartidorId) {
