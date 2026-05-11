@@ -80,11 +80,15 @@ Includes:
 ## OrderStatus
 
 ```java
-PENDING,
-PREPARING,
-ON_THE_WAY,
-DELIVERED,
-CANCELLED
+
+    CREADO,
+    ACEPTADO,
+    EN_PREPARACION,
+    EN_CAMINO,
+    ENTREGADO,
+    CANCELADO,
+    PAGADO,
+    PAGO_RECHAZADO
 ```
 
 ## ProductAvailability
@@ -108,44 +112,42 @@ CLOSED
 ## Users
 
 ```http
-POST   /api/v2/users
-GET    /api/v2/users
-GET    /api/v2/users/{id}
+POST   /api/v2/usuarios
+GET    /api/v2/usuarios
+GET    /api/v2/{id}
 ```
 
 ## Restaurants
 
 ```http
-POST   /api/v2/restaurants
-GET    /api/v2/restaurants
-GET    /api/v2/restaurants/{id}
-DELETE /api/v2/restaurants/{id}
+POST   /api/v2/restaurantes
+GET    /api/v2/restaurantes
+DELETE /api/v2/{id}
 ```
 
 ## Products
 
 ```http
-POST   /api/v2/products
-GET    /api/v2/products
-GET    /api/v2/products/{id}
-DELETE /api/v2/products/{id}
+POST   /api/v2/productos
+GET    /api/v2/productos
+GET    /api/v2/productos/{id}
+DELETE /api/v2/productos/{id}
 ```
 
 ## Delivery Drivers
 
 ```http
-POST   /api/v2/delivery-drivers
-GET    /api/v2/delivery-drivers
-GET    /api/v2/delivery-drivers/{id}
+POST   /api/v2/repartidor
+GET    /api/v2/{id}
 ```
 
 ## Orders
 
 ```http
-POST   /api/v2/orders
-GET    /api/v2/orders
-GET    /api/v2/orders/{id}
-DELETE /api/v2/orders/{id}
+POST   /api/v2/pedidos
+GET    /api/v2/pedidos
+GET    /api/v2/pedidos/{id}
+DELETE /api/v2/pedidos/{id}
 ```
 
 ---
@@ -153,13 +155,12 @@ DELETE /api/v2/orders/{id}
 # Example JSON to Create an Order
 
 ```json
+Ejemplo de JSON para crear un Pedido
 {
-  "date": "2026-01-21",
-  "total": 25000,
-  "orderStatus": "PENDING",
-  "customerId": 1,
-  "deliveryDriverId": 2,
-  "restaurantId": 3
+  "clienteId": 12,
+  "repartidorId": null,
+ "restauranteId": 2,
+  "total": 25000.00
 }
 ```
 
@@ -218,11 +219,10 @@ This project was developed with the purpose of:
 
 # Main Endpoints
 
-- `/api/v2/users`
-- `/api/v2/restaurants`
-- `/api/v2/products`
-- `/api/v2/delivery-drivers`
-- `/api/v2/orders`
+- `/api/v2/usuarios`
+- `/api/v2/restaurantes`
+- `/api/v2/productos`
+- `/api/v2/pedidos`
 
 ---
 
