@@ -1,233 +1,254 @@
-DeliveryApp – API REST con Spring Boot
+# DeliveryApp – REST API with Spring Boot
 
-DeliveryApp es una API REST desarrollada con Spring Boot que simula el funcionamiento básico de una aplicación de domicilios (delivery).
-Permite gestionar usuarios (clientes), restaurantes, productos, repartidores y pedidos, manejando relaciones reales entre las entidades.
+DeliveryApp is a REST API developed with Spring Boot that simulates the basic functionality of a food delivery application.  
+It allows the management of users (customers), restaurants, products, delivery drivers, and orders, handling real relationships between entities.
 
-El proyecto está pensado como práctica backend y para portafolio, aplicando buenas prácticas de desarrollo.
+The project was created as a backend practice project and portfolio piece, applying good development practices.
 
-------------------------------------------------------------------------------------------------------------------------------------------
+---
 
- Arquitectura del Proyecto
+# Project Architecture
 
-El proyecto sigue una arquitectura Hexagonal
+The project follows a Hexagonal Architecture.
 
--------------------------------------------------------------------------
+---
 
- Tecnologías Utilizadas:
+# Technologies Used
 
-Java 21
+- Java 21
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Hibernate
+- JSON
+- MySQL / H2
+- Maven
 
-Spring Boot
+---
 
-Spring Web
+# Main Entities
 
-Spring Data JPA
+## User
 
-Hibernate
+Represents the customers of the system.
 
-Json
+### User Roles
 
-MySQL / H2
+The system handles the following roles:
 
-Maven
+- CUSTOMER → Places orders
+- DELIVERY_DRIVER → Delivers orders
+- RESTAURANT → Manages products (future implementation)
 
---------------------------------------------------------------------------------
+---
 
- Entidades Principales
- Usuario
+## Restaurant
 
+Contains basic information and a list of associated products.
 
-## Roles de Usuario
+---
 
-El sistema maneja los siguientes roles:
+## Product
 
-- CLIENTE → Realiza pedidos
-- REPARTIDOR → Entrega pedidos
-- RESTAURANTE → Gestiona productos (futuro)
+Belongs to a restaurant and has an availability status.
 
+---
 
-Representa a los clientes del sistema.
+## Delivery Driver
 
- Restaurante
+User responsible for delivering orders.
 
-Contiene información básica y una lista de productos asociados.
+---
 
- Producto
+## Order
 
-Pertenece a un restaurante y tiene estado de disponibilidad.
+Main entity that relates:
 
- Repartidor
+- Customer
+- Delivery Driver
+- Restaurant
 
-Usuario encargado de entregar los pedidos.
+Includes:
 
- Pedido
+- Date
+- Total amount
 
-Entidad principal que relaciona:
+---
 
-Cliente
+# Status Enums
 
-Repartidor
+## OrderStatus
 
-Restaurante
+```java
+PENDING,
+PREPARING,
+ON_THE_WAY,
+DELIVERED,
+CANCELLED
+```
 
-Incluye:
+## ProductAvailability
 
-Fecha
+```java
+AVAILABLE,
+NOT_AVAILABLE
+```
 
-Total
-------------------------------------------------------------
+## RestaurantStatus
 
- Estados (Enums)
-EstadoPedido
-PENDIENTE,
-EN_PREPARACION,
-EN_CAMINO,
-ENTREGADO,
-CANCELADO
+```java
+OPEN,
+CLOSED
+```
 
-DisponibilidadProducto
-DISPONIBLE,
-NO_DISPONIBLE
+---
 
-EstadoRestaurante
-ABIERTO,
-CERRADO
+# Main Endpoints (URLs)
 
- Endpoints Principales (URLs)
- Usuarios
-Usuarios
-POST   /api/v2/usuarios
-GET    /api/v2/usuarios
-GET    /api/v2/usuarios/{id}
+## Users
 
-Restaurantes
-POST   /api/v2/restaurantes
-GET    /api/v2/restaurantes
-GET    /api/v2/restaurantes/{id}
-DELETE /api/v2/restaurantes/{id}
+```http
+POST   /api/v2/users
+GET    /api/v2/users
+GET    /api/v2/users/{id}
+```
 
-Productos
-POST   /api/v2/productos
-GET    /api/v2/productos
-GET    /api/v2/productos/{id}
-DELETE /api/v2/productos/{id}
+## Restaurants
 
-Repartidores
-POST   /api/v2/repartidores
-GET    /api/v2/repartidores
-GET    /api/v2/repartidores/{id}
+```http
+POST   /api/v2/restaurants
+GET    /api/v2/restaurants
+GET    /api/v2/restaurants/{id}
+DELETE /api/v2/restaurants/{id}
+```
 
- Pedidos
-POST   /api/v2/pedidos
-GET    /api/v2/pedidos
-GET    /api/v2/pedidos/{id}
-DELETE /api/v2/pedidos/{id}
-----------------------------------------------------------------------------------------
- Ejemplo de JSON para crear un Pedido
+## Products
+
+```http
+POST   /api/v2/products
+GET    /api/v2/products
+GET    /api/v2/products/{id}
+DELETE /api/v2/products/{id}
+```
+
+## Delivery Drivers
+
+```http
+POST   /api/v2/delivery-drivers
+GET    /api/v2/delivery-drivers
+GET    /api/v2/delivery-drivers/{id}
+```
+
+## Orders
+
+```http
+POST   /api/v2/orders
+GET    /api/v2/orders
+GET    /api/v2/orders/{id}
+DELETE /api/v2/orders/{id}
+```
+
+---
+
+# Example JSON to Create an Order
+
+```json
 {
-  "fecha": "2026-01-21",
+  "date": "2026-01-21",
   "total": 25000,
-  "estadoPedido": "PENDIENTE",
-  "clienteId": 1,
-  "repartidorId": 2,
-  "restauranteId": 3
+  "orderStatus": "PENDING",
+  "customerId": 1,
+  "deliveryDriverId": 2,
+  "restaurantId": 3
 }
-----------------------------------------------------------------------------------------------------------
- Manejo de Relaciones y JSON
+```
 
-Para evitar ciclos infinitos al listar información, se utilizan:
+---
 
-@JsonManagedReference
+# Relationship and JSON Handling
 
-@JsonBackReference
+To avoid infinite loops when listing information, the project uses:
 
-@JsonIgnore
--------------------------------------------------------------------------------
+- `@JsonManagedReference`
+- `@JsonBackReference`
+- `@JsonIgnore`
 
- Cómo ejecutar el proyecto
+---
 
-Clonar el repositorio
+# How to Run the Project
 
-git clone https://github.com/tu-usuario/DeliveryApp.git
+## Clone the Repository
 
+```bash
+git clone https://github.com/your-username/DeliveryApp.git
+```
 
-Abrir el proyecto en IntelliJ IDEA o VS Code
+## Open the Project
 
-Configurar la base de datos en application.properties
+Open the project in IntelliJ IDEA or VS Code.
 
-Ejecutar la clase principal:
+## Configure the Database
 
+Set up the database in `application.properties`.
+
+## Run the Main Class
+
+```java
 DeliveryAppApplication.java
+```
 
----------------------------------------------------------------------------------------
+---
 
-Probar los endpoints con Postman o Insomnia
+# Testing the API
 
---------------------------------------------------------------------------------------
+Test the endpoints using Postman or Insomnia.
 
- Objetivo del Proyecto
+---
 
-Este proyecto fue desarrollado con el objetivo de:
+# Project Goals
 
-Practicar desarrollo backend con Spring Boot
+This project was developed with the purpose of:
 
-Implementar APIs REST
+- Practicing backend development with Spring Boot
+- Implementing REST APIs
+- Managing JPA relationships
+- Applying good programming practices
 
-Manejar relaciones JPA
+---
 
-Aplicar buenas prácticas de programación
+# Main Endpoints
 
--------------------------------------------------------------------------------------
- Estados (Enums)
-EstadoPedido
+- `/api/v2/users`
+- `/api/v2/restaurants`
+- `/api/v2/products`
+- `/api/v2/delivery-drivers`
+- `/api/v2/orders`
 
-PENDIENTE,
-EN_PREPARACION,
-EN_CAMINO,
-ENTREGADO,
-CANCELADO
+---
 
-------------------------------------------------------------------------------------
-## Endpoints principales
+# Database Configuration
 
-- /api/v2/usuarios
-- /api/v2/restaurantes
-- /api/v2/productos
-- /api/v2/repartidores
-- /api/v2/pedidos
+The project uses MySQL or H2.
 
+Example in `application.properties`:
 
------------------------------------------------------------------------------------
-
-
-## Configuración de Base de Datos
-
-El proyecto utiliza MySQL o H2.
-
-Ejemplo en `application.properties`:
-
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/delivery_app
 spring.datasource.username=root
-spring.datasource.password=tu_password
+spring.datasource.password=your_password
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+```
 
+---
 
----------------------------------------------------------------------------------
+# Future Improvements
 
-## Mejoras futuras
-- Autenticación con JWT
-- Paginación
+- JWT Authentication
+- Pagination
 
+---
 
- Proyecto desarrollado con fines educativos y de portafolio.
- Autor Adalberto
-
-
-
-
-
-
-
-
+Project developed for educational and portfolio purposes.  
+Author: Adalberto
