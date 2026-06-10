@@ -1,254 +1,109 @@
-# DeliveryApp – REST API with Spring Boot
+# DeliveryApp – API REST con Spring Boot y Arquitectura Hexagonal
 
-DeliveryApp is a REST API developed with Spring Boot that simulates the basic functionality of a food delivery application.  
-It allows the management of users (customers), restaurants, products, delivery drivers, and orders, handling real relationships between entities.
+DeliveryApp es una API REST hecha con Java 21 y Spring Boot 3.x que simula el funcionamiento básico de una aplicación de entrega de comida (tipo Uber Eats o Rappi). 
 
-The project was created as a backend practice project and portfolio piece, applying good development practices.
-
----
-
-# Project Architecture
-
-The project follows a Hexagonal Architecture.
+Creé este proyecto para practicar desarrollo backend, manejo de relaciones complejas en bases de datos y, principalmente, para aprender a estructurar el código usando Arquitectura Hexagonal.
 
 ---
 
-# Technologies Used
+## Cómo organicé el proyecto (Arquitectura)
 
-- Java 21
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Hibernate
-- JSON
-- MySQL / H2
-- Maven
+Decidí usar Arquitectura Hexagonal para separar la lógica del negocio de las herramientas externas (como la base de datos o el propio Spring Boot). El código está dividido en tres partes:
 
----
+* **Dominio**: Es el núcleo del proyecto. Aquí están las reglas del negocio y las entidades básicas. Es Java puro.
+* **Puertos**: Son interfaces que definen qué acciones se pueden hacer y qué datos se necesitan para conectar el dominio con el exterior.
+* **Adaptadores**: Es la implementación real de las tecnologías. Aquí están los controladores de Spring (para recibir las peticiones HTTP) y los repositorios de JPA (para guardar la información en MySQL o H2).
 
-# Main Entities
-
-## User
-
-Represents the customers of the system.
-
-### User Roles
-
-The system handles the following roles:
-
-- CUSTOMER → Places orders
-- DELIVERY_DRIVER → Delivers orders
-- RESTAURANT → Manages products (future implementation)
+### Nota sobre el manejo de datos y bucles infinitos
+Para evitar errores de recursividad o bucles infinitos al consultar datos relacionados, separé las entidades de la base de datos de los datos que viajan por la red. Uso DTOs (Data Transfer Objects) y clases mapeadoras para transformar la información entre capas de forma limpia.
 
 ---
 
-## Restaurant
+## Tecnologías utilizadas
 
-Contains basic information and a list of associated products.
-
----
-
-## Product
-
-Belongs to a restaurant and has an availability status.
+* Java 21
+* Spring Boot 3.x (Spring Web, Spring Data JPA)
+* Hibernate y MySQL / H2
+* Maven
+* Validaciones con Jakarta Bean Validation (@Valid, @NotNull, @NotBlank)
 
 ---
 
-## Delivery Driver
+## Entidades Principales
 
-User responsible for delivering orders.
+* **User (Usuario)**: Clientes que piden comida y repartidores que la entregan.
+* **Restaurant (Restaurante)**: Locales comerciales con sus datos y estado (OPEN / CLOSED).
+* **Product (Producto)**: Comida o artículos de un restaurante con estado de disponibilidad.
+* **Order (Pedido)**: Une al cliente, al restaurante y al repartidor, y maneja el estado de la orden.
 
----
-
-## Order
-
-Main entity that relates:
-
-- Customer
-- Delivery Driver
-- Restaurant
-
-Includes:
-
-- Date
-- Total amount
+### Estados del pedido (OrderStatus)
+CREADO -> PAGADO -> ACEPTADO -> EN_PREPARACION -> EN_CAMINO -> ENTREGADO
 
 ---
 
-# Status Enums
+## Rutas de la API (Endpoints)
 
-## OrderStatus
+Todas las rutas usan el prefijo /api/v2/ y siguen el estándar REST.
 
-```java
+### Usuarios
+* POST /api/v2/usuarios - Crear usuario
+* GET  /api/v2/usuarios - Ver todos los usuarios
+* GET  /api/v2/usuarios/{id} - Ver un usuario específico
 
-    CREADO,
-    ACEPTADO,
-    EN_PREPARACION,
-    EN_CAMINO,
-    ENTREGADO,
-    CANCELADO,
-    PAGADO,
-    PAGO_RECHAZADO
-```
+### Pedidos
+* POST /api/v2/pedidos - Crear un pedido nuevo
+* GET  /api/v2/pedidos - Ver historial de pedidos
+* GET  /api/v2/pedidos/{id} - Ver estado de un pedido
 
-## ProductAvailability
+(Hice rutas similares para los productos y los restaurantes).
 
-```java
-AVAILABLE,
-NOT_AVAILABLE
-```
-
-## RestaurantStatus
-
-```java
-OPEN,
-CLOSED
-```
-
----
-
-# Main Endpoints (URLs)
-
-## Users
-
-```http
-POST   /api/v2/usuarios
-GET    /api/v2/usuarios
-GET    /api/v2/{id}
-```
-
-## Restaurants
-
-```http
-POST   /api/v2/restaurantes
-GET    /api/v2/restaurantes
-DELETE /api/v2/{id}
-```
-
-## Products
-
-```http
-POST   /api/v2/productos
-GET    /api/v2/productos
-GET    /api/v2/productos/{id}
-DELETE /api/v2/productos/{id}
-```
-
-## Delivery Drivers
-
-```http
-POST   /api/v2/repartidor
-GET    /api/v2/{id}
-```
-
-## Orders
-
-```http
-POST   /api/v2/pedidos
-GET    /api/v2/pedidos
-GET    /api/v2/pedidos/{id}
-DELETE /api/v2/pedidos/{id}
-```
-
----
-
-# Example JSON to Create an Order
+### Ejemplo de JSON para crear un Pedido (POST /api/v2/pedidos)
 
 ```json
-Ejemplo de JSON para crear un Pedido
 {
   "clienteId": 12,
-  "repartidorId": null,
- "restauranteId": 2,
+  "restauranteId": 2,
   "total": 25000.00
 }
 ```
 
 ---
 
-# Relationship and JSON Handling
+## Cómo correr el proyecto en tu computadora
 
-To avoid infinite loops when listing information, the project uses:
+### Prerrequisitos
+* Tener instalado JDK 21 y Maven.
+* Tener MySQL corriendo (opcional, se puede configurar para usar H2 en memoria).
 
-- `@JsonManagedReference`
-- `@JsonBackReference`
-- `@JsonIgnore`
-
----
-
-# How to Run the Project
-
-## Clone the Repository
-
+### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/your-username/DeliveryApp.git
+git clone https://github.com
+cd DeliveryApp
 ```
 
-## Open the Project
-
-Open the project in IntelliJ IDEA or VS Code.
-
-## Configure the Database
-
-Set up the database in `application.properties`.
-
-## Run the Main Class
-
-```java
-DeliveryAppApplication.java
-```
-
----
-
-# Testing the API
-
-Test the endpoints using Postman or Insomnia.
-
----
-
-# Project Goals
-
-This project was developed with the purpose of:
-
-- Practicing backend development with Spring Boot
-- Implementing REST APIs
-- Managing JPA relationships
-- Applying good programming practices
-
----
-
-# Main Endpoints
-
-- `/api/v2/usuarios`
-- `/api/v2/restaurantes`
-- `/api/v2/productos`
-- `/api/v2/pedidos`
-
----
-
-# Database Configuration
-
-The project uses MySQL or H2.
-
-Example in `application.properties`:
+### 2. Configurar la base de datos (src/main/resources/application.properties)
+Asegúrate de cambiar los datos de acceso por los tuyos:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/delivery_app
-spring.datasource.username=root
-spring.datasource.password=your_password
-
+spring.datasource.url=jdbc:mysql://localhost:3306/delivery_app?createDatabaseIfNotExist=true
+spring.datasource.username=tu_usuario
+spring.datasource.password=tu_contrasenia
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
 ```
 
+### 3. Ejecutar
+```bash
+mvn clean spring-boot:run
+```
+La aplicación se levantará en el puerto http://localhost:8080.
+
 ---
 
-# Future Improvements
-
-- JWT Authentication
-- Pagination
+## Cosas que quiero agregarle después (Mejoras futuras)
+* Agregar seguridad con Spring Security y tokens JWT.
+* Paginación en las listas de usuarios y pedidos para no saturar la memoria.
+* Subir el proyecto a Docker para que sea más fácil de desplegar.
+* Documentar los endpoints con Swagger.
 
 ---
-
-Project developed for educational and portfolio purposes.  
-Author: Adalberto
+**Desarrollado por:** Adalberto — Programador Backend enfocado en aprender buenas prácticas y código limpio.
