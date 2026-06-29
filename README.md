@@ -12,7 +12,7 @@ Decidí usar Arquitectura Hexagonal para separar la lógica del negocio de las h
 
 * **Dominio**: Es el núcleo del proyecto. Aquí están las reglas del negocio y las entidades básicas. Es Java puro.
 * **Puertos**: Son interfaces que definen qué acciones se pueden hacer y qué datos se necesitan para conectar el dominio con el exterior.
-* **Adaptadores**: Es la implementación real de las tecnologías. Aquí están los controladores de Spring (para recibir las peticiones HTTP) y los repositorios de JPA (para guardar la información en MySQL o H2).
+* **Adaptadores**: Es la implementación real de las tecnologías. Aquí están los controladores de Spring (para recibir las peticiones HTTP) y los repositorios de JPA (para guardar la información en MySQL).
 
 ### Nota sobre el manejo de datos y bucles infinitos
 Para evitar errores de recursividad o bucles infinitos al consultar datos relacionados, separé las entidades de la base de datos de los datos que viajan por la red. Uso DTOs (Data Transfer Objects) y clases mapeadoras para transformar la información entre capas de forma limpia.
@@ -71,7 +71,7 @@ Todas las rutas usan el prefijo /api/v2/ y siguen el estándar REST.
 
 ## Cómo correr el proyecto en tu computadora
 
-### Prerrequisitos
+### Pre requisitos
 * Tener instalado JDK 21 y Maven.
 * Tener MySQL corriendo
 
@@ -103,7 +103,6 @@ La aplicación se levantará en el puerto http://localhost:8080.
 * Agregar seguridad con Spring Security y tokens JWT.
 * Paginación en las listas de usuarios y pedidos para no saturar la memoria.
 * Subir el proyecto a Docker para que sea más fácil de desplegar.
-* Documentar los endpoints con Swagger.
-
+  
 ---
 **Desarrollado por:** Adalberto — Programador Backend enfocado en aprender buenas prácticas y código limpio.
