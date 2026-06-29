@@ -73,7 +73,7 @@ Todas las rutas usan el prefijo /api/v2/ y siguen el estándar REST.
 
 ### Prerrequisitos
 * Tener instalado JDK 21 y Maven.
-* Tener MySQL corriendo (opcional, se puede configurar para usar H2 en memoria).
+* Tener MySQL corriendo
 
 ### 1. Clonar el repositorio
 ```bash
