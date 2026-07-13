@@ -1,7 +1,7 @@
 package com.proyectos.DeliveryApp;
 
 
-import com.proyectos.DeliveryApp.aplication.RestauranteServiceAplication;
+import com.proyectos.DeliveryApp.aplication.RestauranteServiceApplication;
 import com.proyectos.DeliveryApp.domain.enums.EstadoRestaurante;
 import com.proyectos.DeliveryApp.domain.model.Restaurante;
 import com.proyectos.DeliveryApp.domain.ports.out.RestauranteRepositoryOutPorts;
@@ -20,13 +20,13 @@ import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class TestRestaurateServiceAplication {
+public class RestaurateServiceAplicationTest {
 
     @Mock
     RestauranteRepositoryOutPorts repository;
 
     @InjectMocks
-    RestauranteServiceAplication aplication;
+    RestauranteServiceApplication aplication;
 
 
     //FinAll Restaurant
@@ -159,25 +159,6 @@ public class TestRestaurateServiceAplication {
         verify(repository).findById(restaurante.getId());
     }
 
-    @Test
-    void shouldThrowExceptionRestaurantIdIsNull_Update(){
-        var restaurante = Restaurante.
-                builder().
-                nombre("La buena mesa").
-                direccion("random222").
-                estado(EstadoRestaurante.CERRADO).
-                build();
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                ()-> aplication.actualizar(null,restaurante));
-
-        log.info(exception.getMessage());
-
-        assertEquals("El id no puede ser nulo",exception.getMessage());
-
-        verify(repository, never()).findById(any());
-        verify(repository,never()).save(any());
-    }
 
     //Delete Restaurant
 

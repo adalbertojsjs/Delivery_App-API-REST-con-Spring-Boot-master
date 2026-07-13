@@ -11,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class RestauranteServiceAplication implements ServiceRestaurante {
+public class RestauranteServiceApplication implements ServiceRestaurante {
 
     private final RestauranteRepositoryOutPorts repository;
 
@@ -33,10 +33,6 @@ public class RestauranteServiceAplication implements ServiceRestaurante {
 
     @Override
     public Restaurante actualizar(Long id, Restaurante restaurante){
-
-        if (id == null){
-            throw new IllegalArgumentException("El id no puede ser nulo");
-        }
 
         Restaurante restauranteExistente = repository.findById(id)
                 .orElseThrow(() -> new RestauranteNoEncontradoException(id));

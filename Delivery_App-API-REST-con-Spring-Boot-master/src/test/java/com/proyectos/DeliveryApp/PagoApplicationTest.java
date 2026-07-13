@@ -1,6 +1,6 @@
 package com.proyectos.DeliveryApp;
 
-import com.proyectos.DeliveryApp.aplication.PagoServiceAplication;
+import com.proyectos.DeliveryApp.aplication.PagoServiceApplication;
 import com.proyectos.DeliveryApp.domain.Exception.PedidoNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import com.proyectos.DeliveryApp.domain.model.Pago;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class TestPagoAplication {
+public class PagoApplicationTest {
 
 
     @Mock
@@ -35,7 +35,7 @@ public class TestPagoAplication {
     PedidoRepositoryOutPorts pedidoRepository;
 
     @InjectMocks
-    PagoServiceAplication aplication;
+    PagoServiceApplication aplication;
 
 
     //Create Payment
@@ -127,28 +127,6 @@ public class TestPagoAplication {
 
 
     @Test
-    void shouldThrowExceptionWhenOrderIsNull(){
-
-        var pago = Pago.
-                builder().
-                nombreComprador("random999").
-                numeroTarjeta("484348374").
-                build();
-
-       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.Pagar(null, pago));
-
-       log.info(exception.getMessage());
-
-       assertEquals("El id es obligatorio", exception.getMessage());
-
-        verify(pedidoRepository, never()).findById(any());
-        verify(repository,never()).save(any());
-        verify(pedidoRepository, never()).save(any());
-    }
-
-
-    @Test
     void shouldThrowExceptionWhenStatusIsPaid(){
 
         var pedido = Pedido.
@@ -207,7 +185,6 @@ public class TestPagoAplication {
         verify(repository,never()).save(any());
         verify(pedidoRepository, never()).save(any());
     }
-
     //Get Payment y ID
 
     @Test

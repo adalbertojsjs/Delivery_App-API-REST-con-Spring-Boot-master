@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Service
-public class PagoServiceAplication implements PagoService {
+public class PagoServiceApplication implements PagoService {
 
     private final PedidoRepositoryOutPorts repository;
 
@@ -25,9 +25,6 @@ public class PagoServiceAplication implements PagoService {
     @Override
     public Pago Pagar(Long pedidoId, Pago pago){
 
-        if (pedidoId == null) {
-            throw new IllegalArgumentException("El id es obligatorio");
-        }
 
         var pedido = repository.findById(pedidoId).orElseThrow(() ->
                 new PedidoNoEncontradoException(pedidoId));

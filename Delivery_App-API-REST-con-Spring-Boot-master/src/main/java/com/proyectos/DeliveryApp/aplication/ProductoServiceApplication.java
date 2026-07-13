@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class ProductoServiceAplication implements ProductoService {
+public class ProductoServiceApplication implements ProductoService {
 
     private  final ProductoRepositoryOutPorts productoRepository;
     private  final RestauranteRepositoryOutPorts restauranteRepository;
@@ -48,9 +48,6 @@ public class ProductoServiceAplication implements ProductoService {
 
     @Override
     public Producto cambiarDisponibilidad(Long id, Disponible disponible) {
-        if (id == null){
-            throw new IllegalArgumentException("El Id es obligatorio");
-        }
 
         if (disponible == null) {
             throw new IllegalArgumentException("El estado de disponibilidad es obligatorio");
@@ -67,9 +64,6 @@ public class ProductoServiceAplication implements ProductoService {
 
     @Override
     public List<Producto> listarPorRestaurante(Long restauranteId) {
-        if (restauranteId == null){
-            throw new IllegalArgumentException("El Id del restaurante es obligatorio");
-        }
 
         if (!restauranteRepository.existsById(restauranteId)){
             throw new RestauranteNoEncontradoException(restauranteId);
@@ -81,9 +75,6 @@ public class ProductoServiceAplication implements ProductoService {
 
     @Override
     public Producto buscarPorId(Long id) {
-        if (id == null){
-            throw new IllegalArgumentException("El Id es obligatorio");
-        }
 
        return productoRepository.findById(id).orElseThrow
                 (() -> new ProductoNoEncontrado(id));

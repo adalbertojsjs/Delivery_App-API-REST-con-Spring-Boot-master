@@ -1,7 +1,7 @@
 package com.proyectos.DeliveryApp;
 
 
-import com.proyectos.DeliveryApp.aplication.ProductoServiceAplication;
+import com.proyectos.DeliveryApp.aplication.ProductoServiceApplication;
 import com.proyectos.DeliveryApp.domain.Exception.RestauranteNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.enums.Disponible;
 import com.proyectos.DeliveryApp.domain.enums.EstadoRestaurante;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class TestProductoServiceAplication {
+public class ProductoServiceApplicationTest {
 
     @Mock
     ProductoRepositoryOutPorts repository;
@@ -34,7 +34,7 @@ public class TestProductoServiceAplication {
     RestauranteRepositoryOutPorts restauranteRepositoryOutPorts;
 
     @InjectMocks
-    ProductoServiceAplication aplication;
+    ProductoServiceApplication aplication;
 
 
     //Metodo listar
@@ -178,17 +178,6 @@ public class TestProductoServiceAplication {
         verify(repository).findById(id);
     }
 
-    @Test
-    void shouldThrowExceptionWhenIdIsNull(){
-
-        Long id = null;
-
-       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,() ->
-                aplication.cambiarDisponibilidad(id , Disponible.DISPONIBLE));
-
-        log.info(exception.getMessage());
-        verify(repository, never()).save(any());
-    }
 
     @Test
     void shouldThrowExceptionWhenavailableIsNull(){
@@ -247,25 +236,6 @@ public class TestProductoServiceAplication {
         verify(restauranteRepositoryOutPorts).existsById(restaurante.getId());
     }
 
-    @Test
-    void shouldThrowExceptionRestaurantIdIsNull(){
-
-        var restaurante = Restaurante.
-                builder().
-                id(null).
-                nombre("Restaurante la buena mesa").
-                direccion("random99").
-                estado(EstadoRestaurante.ABIERTO).
-                build();
-
-      IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.listarPorRestaurante(restaurante.getId()));
-
-        log.info(exception.getMessage());
-        verify(repository, never()).findByRestauranteId(any());
-        verify(restauranteRepositoryOutPorts ,never()).existsById(any());
-
-    }
 
     @Test
     void shouldThrowExceptionWhenRestaurantIdDoesNotExist(){
@@ -304,21 +274,5 @@ public class TestProductoServiceAplication {
         assertNotNull(result);
         assertEquals(1L,result.getRestauranteId());
         assertEquals("Random333",result.getNombre());
-    }
-
-    @Test
-    void shouldThrowExceptionProductIdIsNull(){
-        var producto = Producto.
-                builder().
-                id(null).
-                nombre("Random333").
-                precio(BigDecimal.valueOf(778)).
-                disponible(Disponible.DISPONIBLE).
-                restauranteId(1L).
-                build();
-
-        assertThrows(IllegalArgumentException.class, ()-> aplication.buscarPorId(producto.getId()));
-
-        verify(repository,never()).findById(producto.getId());
     }
 }

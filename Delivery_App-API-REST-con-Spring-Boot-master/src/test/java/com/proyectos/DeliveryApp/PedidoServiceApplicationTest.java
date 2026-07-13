@@ -1,7 +1,7 @@
 package com.proyectos.DeliveryApp;
 
 
-import com.proyectos.DeliveryApp.aplication.PedidoServiceAplication;
+import com.proyectos.DeliveryApp.aplication.PedidoServiceApplication;
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
 import com.proyectos.DeliveryApp.domain.enums.EstadoRestaurante;
 import com.proyectos.DeliveryApp.domain.enums.Rol;
@@ -13,6 +13,9 @@ import com.proyectos.DeliveryApp.domain.ports.out.UsuarioRepositoryOutPorts;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -22,13 +25,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class TestPedidoServiceAplication {
+public class PedidoServiceApplicationTest {
 
 
     @Mock
@@ -38,7 +42,7 @@ public class TestPedidoServiceAplication {
     UsuarioRepositoryOutPorts repositoryOutPorts;
 
     @InjectMocks
-    PedidoServiceAplication aplication;
+    PedidoServiceApplication application;
 
 
     //FindAll Orders
@@ -49,7 +53,7 @@ public class TestPedidoServiceAplication {
         List<Pedido> lista = List.of(Pedido.
                 builder().
                 id(1L).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 estadoPedido(EstadoPedido.CREADO).
                 clienteId(1L).
@@ -58,7 +62,7 @@ public class TestPedidoServiceAplication {
                 build(), Pedido.
                 builder().
                 id(2L).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 estadoPedido(EstadoPedido.CANCELADO).
                 clienteId(2L).
@@ -68,7 +72,7 @@ public class TestPedidoServiceAplication {
 
         when(repository.findAll()).thenReturn(lista);
 
-        var result = aplication.listar();
+        var result = application.listar();
 
         log.info("Cantidad de resultados: {}", result.size());
 
@@ -102,7 +106,7 @@ public class TestPedidoServiceAplication {
         when(repository.save(order)).thenReturn(order);
         when(repositoryOutPorts.findById(order.getClienteId())).thenReturn(Optional.of(user));
 
-        var result = aplication.crear(order);
+        var result = application.crear(order);
 
         assertNotNull(result);
         assertEquals(2L, result.getRepartidorId());
@@ -113,22 +117,20 @@ public class TestPedidoServiceAplication {
         verify(repositoryOutPorts).findById(user.getId());
     }
 
-    @Test
-    void shouldThrowExceptionWhenOrderIsNull() {
-        Pedido pedido = null;
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.crear(pedido));
+    @ParameterizedTest
+    @MethodSource("invalidOrder")
+    void shouldThrowException(Pedido pedido, String expectedMessage){
 
-        log.info(exception.getMessage());
-        assertEquals("El pedido no puede ser nulo", exception.getMessage());
+        var exception = assertThrows(IllegalArgumentException.class, () -> application.crear(pedido));
 
-        verify(repository, never()).save(any());
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
-    @Test
-    void shouldThrowExceptionWhenClientIdIsNull() {
-        var order = Pedido.
+    static Stream<Arguments> invalidOrder(){
+
+        Pedido orderIsNull = null;
+        var orderClienteIdIsNull = Pedido.
                 builder().
                 total(BigDecimal.valueOf(7000)).
                 clienteId(null).
@@ -136,18 +138,7 @@ public class TestPedidoServiceAplication {
                 restauranteId(3L).
                 build();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.crear(order));
-
-        log.info(exception.getMessage());
-        assertEquals("El id del cliente no puede ser nulo", exception.getMessage());
-
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenRestaurantIdIsNull() {
-        var order = Pedido.
+        var orderRestauranteIdIsNull = Pedido.
                 builder().
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
@@ -155,13 +146,10 @@ public class TestPedidoServiceAplication {
                 restauranteId(null).
                 build();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.crear(order));
-
-        log.info(exception.getMessage());
-        assertEquals("El id del restaurante no puede ser nulo", exception.getMessage());
-
-        verify(repository, never()).save(any());
+        return Stream.of(
+                Arguments.of(orderIsNull, "El pedido no puede ser nulo"),
+                Arguments.of(orderClienteIdIsNull, "El id del cliente no puede ser nulo"),
+                Arguments.of(orderRestauranteIdIsNull, "El id del restaurante no puede ser nulo"));
     }
 
     //Canceled Orders
@@ -173,7 +161,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(2L).
@@ -182,7 +170,7 @@ public class TestPedidoServiceAplication {
 
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
 
-        aplication.cancelar(order.getId());
+        application.cancelar(order.getId());
 
         ArgumentCaptor<Pedido> captor = ArgumentCaptor.forClass(Pedido.class);
 
@@ -202,28 +190,6 @@ public class TestPedidoServiceAplication {
         verify(repository).save(order);
     }
 
-    @Test
-    void shouldThrowExceptionWhenOrderIdIsNull() {
-        var order = Pedido.
-                builder().
-                id(null).
-                estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(7000)).
-                clienteId(1L).
-                repartidorId(2L).
-                restauranteId(3L).
-                build();
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class,
-                () -> aplication.cancelar(order.getId()));
-
-        log.info(exception.getMessage());
-        assertEquals("El ID es obligatorio", exception.getMessage());
-
-        verify(repository, never()).findById(any());
-        verify(repository, never()).save(any());
-    }
 
     //Update Status Order
 
@@ -233,7 +199,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(2L).
@@ -242,7 +208,7 @@ public class TestPedidoServiceAplication {
 
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
 
-        aplication.cambiarEstado(order.getId(), EstadoPedido.EN_CAMINO);
+        application.cambiarEstado(order.getId(), EstadoPedido.EN_CAMINO);
 
         ArgumentCaptor<Pedido> captor = ArgumentCaptor.forClass(Pedido.class);
 
@@ -260,87 +226,44 @@ public class TestPedidoServiceAplication {
         verify(repository).save(order);
     }
 
-    @Test
-    void shouldThrowExceptionWhenChangingStatusWithNullId() {
-        var order = Pedido.
-                builder().
-                id(null).
-                estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(7000)).
-                clienteId(1L).
-                repartidorId(2L).
-                restauranteId(3L).
-                build();
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class,
-                () -> aplication.cambiarEstado(order.getId(), EstadoPedido.EN_CAMINO));
+    @ParameterizedTest
+    @MethodSource("finishedOrders")
+    void shouldThrowExceptionInUpdate(Pedido pedido,String expectedMessage){
 
-        log.info(exception.getMessage());
+        when(repository.findById(pedido.getId())).thenReturn(Optional.of(pedido));
 
-        assertEquals("El ID es obligatorio", exception.getMessage());
+        var exception = assertThrows(IllegalStateException.class,
+                ()-> application.cambiarEstado(pedido.getId(), EstadoPedido.CREADO));
 
-        verify(repository, never()).findById(any());
-        verify(repository, never()).save(any());
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
-    @Test
-    void shouldThrowExceptionWhenOrderIsDeliveredOrCancelled() {
-        var order = Pedido.
-                builder().
-                id(1L).
-                estadoPedido(EstadoPedido.CANCELADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(7000)).
-                clienteId(1L).
-                repartidorId(2L).
-                restauranteId(3L).
-                build();
+    static Stream<Arguments> finishedOrders(){
 
-        when(repository.findById(order.getId())).thenReturn(Optional.of(order));
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class,
-                () -> aplication.cambiarEstado(order.getId(), EstadoPedido.EN_CAMINO));
-
-        log.info(exception.getMessage());
-
-        assertEquals("El estado no se puede modificar una vez este finalizado", exception.getMessage());
-
-        verify(repository).findById(order.getId());
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenChangingStatusOfFinalizedOrder() {
-        var order = Pedido.
+        var orderIsEntregada = Pedido.
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.ENTREGADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(7000)).
-                clienteId(1L).
-                repartidorId(2L).
-                restauranteId(3L).
                 build();
 
-        when(repository.findById(order.getId())).thenReturn(Optional.of(order));
+        var orderIsCancell = Pedido.
+                builder().
+                id(1L).
+                estadoPedido(EstadoPedido.CANCELADO).
+                build();
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class,
-                () -> aplication.cambiarEstado(order.getId(), EstadoPedido.EN_CAMINO));
-
-        log.info(exception.getMessage());
-
-        assertEquals("El estado no se puede modificar una vez este finalizado", exception.getMessage());
-
-        verify(repository).findById(order.getId());
-        verify(repository, never()).save(any());
+        return Stream.of(
+                Arguments.of(orderIsEntregada,"El estado no se puede modificar una vez este finalizado"),
+                Arguments.of(orderIsCancell,"El estado no se puede modificar una vez este finalizado")
+        );
     }
 
     //Asignar Repartidor
 
     @Test
     void shouldAssignDriverToOrder() {
-        var userRpartidor = Usuario.
+        var userRepartidor = Usuario.
                 builder().
                 id(1L).
                 nombre("random44455").
@@ -352,7 +275,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(null).
@@ -360,9 +283,9 @@ public class TestPedidoServiceAplication {
                 build();
 
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
-        when(repositoryOutPorts.findById(userRpartidor.getId())).thenReturn(Optional.of(userRpartidor));
+        when(repositoryOutPorts.findById(userRepartidor.getId())).thenReturn(Optional.of(userRepartidor));
 
-        aplication.asignarRepartidor(order.getId(), userRpartidor.getId());
+        application.asignarRepartidor(order.getId(), userRepartidor.getId());
 
         ArgumentCaptor<Pedido> captor = ArgumentCaptor.forClass(Pedido.class);
 
@@ -375,60 +298,10 @@ public class TestPedidoServiceAplication {
         assertEquals(1L, result.getRepartidorId());
 
         verify(repository).findById(order.getId());
-        verify(repositoryOutPorts).findById(userRpartidor.getId());
+        verify(repositoryOutPorts).findById(userRepartidor.getId());
         verify(repository).save(order);
     }
 
-    @Test
-    void shouldThrowExceptionWhenOderIdIsNullForAssign() {
-        Long idRepartidor = 1L;
-        var order = Pedido.
-                builder().
-                id(null).
-                estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(7000)).
-                clienteId(1L).
-                repartidorId(null).
-                restauranteId(3L).
-                build();
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.asignarRepartidor(order.getId(), idRepartidor));
-
-        log.info(exception.getMessage());
-
-        assertEquals("El ID del pedido es obligatorio", exception.getMessage());
-
-        verify(repository, never()).findById(any());
-        verify(repository, never()).save(any());
-        verify(repositoryOutPorts, never()).findById(any());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDealerIdIsNullForAssign() {//dealer según el traductor es repartidor
-        var order = Pedido.
-                builder().
-                id(1L).
-                estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(7000)).
-                clienteId(1L).
-                repartidorId(null).
-                restauranteId(3L).
-                build();
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.asignarRepartidor(order.getId(), null));
-
-        log.info(exception.getMessage());
-
-        assertEquals("El ID del repartidor es obligatorio", exception.getMessage());
-
-        verify(repository, never()).findById(any());
-        verify(repository, never()).save(any());
-        verify(repositoryOutPorts, never()).findById(any());
-    }
 
     @Test
     void shouldThrowExceptionWhenOrderAlreadyHasAssignedDriver() {
@@ -444,7 +317,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(2L).
@@ -454,7 +327,7 @@ public class TestPedidoServiceAplication {
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.asignarRepartidor(order.getId(), userRpartidor.getId()));
+                () -> application.asignarRepartidor(order.getId(), userRpartidor.getId()));
 
         log.info(exception.getMessage());
 
@@ -479,7 +352,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(null).
@@ -490,7 +363,7 @@ public class TestPedidoServiceAplication {
         when(repositoryOutPorts.findById(userRpartidor.getId())).thenReturn(Optional.of(userRpartidor));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.asignarRepartidor(order.getId(), userRpartidor.getId()));
+                () -> application.asignarRepartidor(order.getId(), userRpartidor.getId()));
 
         log.info(exception.getMessage());
 
@@ -515,7 +388,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.ENTREGADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(null).
@@ -525,7 +398,7 @@ public class TestPedidoServiceAplication {
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.asignarRepartidor(order.getId(), userRpartidor.getId()));
+                () -> application.asignarRepartidor(order.getId(), userRpartidor.getId()));
 
         log.info(exception.getMessage());
 
@@ -551,7 +424,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CANCELADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(null).
@@ -561,7 +434,7 @@ public class TestPedidoServiceAplication {
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.asignarRepartidor(order.getId(), userRpartidor.getId()));
+                () -> application.asignarRepartidor(order.getId(), userRpartidor.getId()));
 
         log.info(exception.getMessage());
 
@@ -588,7 +461,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CANCELADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(userClient.getId()).
                 repartidorId(null).
@@ -597,7 +470,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(2L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(8990)).
                 clienteId(userClient.getId()).
                 repartidorId(null).
@@ -606,7 +479,7 @@ public class TestPedidoServiceAplication {
 
         when(repository.findByClienteId(userClient.getId())).thenReturn(lista);
 
-        var result = aplication.obtenerPedidosPorCliente(userClient.getId());
+        var result = application.obtenerPedidosPorCliente(userClient.getId());
 
         System.out.println(result.size());
         assertNotNull(result);
@@ -617,26 +490,6 @@ public class TestPedidoServiceAplication {
         verify(repository).findByClienteId(userClient.getId());
     }
 
-    @Test
-    void shouldThrowExceptionWhenClientIdIsNull_GetOrdersByClientId() {
-        var userClient = Usuario.
-                builder().
-                id(null).
-                nombre("random44455").
-                email("random888").
-                contrasena("random66").
-                rol(Rol.CLIENTE).
-                build();
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.obtenerPedidosPorCliente(userClient.getId()));
-
-        log.info(exception.getMessage());
-        assertEquals("El ID del cliente es obligatorio", exception.getMessage());
-
-        verify(repository, never()).findByClienteId(any());
-
-    }
 
     //Get Ordes By restaurant
 
@@ -655,7 +508,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CANCELADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(null).
@@ -664,7 +517,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(2L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(8990)).
                 clienteId(1L).
                 repartidorId(null).
@@ -673,7 +526,7 @@ public class TestPedidoServiceAplication {
 
         when(repository.findByRestauranteId(restaurant.getId())).thenReturn(lista);
 
-        var result = aplication.obtenerPedidosPorRestaurante(restaurant.getId());
+        var result = application.obtenerPedidosPorRestaurante(restaurant.getId());
 
         assertNotNull(result);
         assertEquals(1L, result.getFirst().getId());
@@ -683,34 +536,16 @@ public class TestPedidoServiceAplication {
         verify(repository).findByRestauranteId(restaurant.getId());
     }
 
-    @Test
-    void shouldThrowExceptionWhenRestaurantIdIsNull_GetByRestaurantId(){
-        var restaurant = Restaurante.
-                builder().
-                id(null).
-                nombre("random000").
-                direccion("random44").
-                estado(EstadoRestaurante.ABIERTO).
-                build();
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> aplication.obtenerPedidosPorRestaurante(restaurant.getId()));
-
-        log.info(exception.getMessage());
-        assertEquals("El ID del restaurante es obligatorio",exception.getMessage());
-
-        verify(repository, never()).findByRestauranteId(any());
-    }
 
     //Get By Status
     @Test
-    void shouldGetAllOrdersByStatusSuccessfully(){
+    void shouldGetAllOrdersByStatusSuccessfully() {
         EstadoPedido estadoPedido = EstadoPedido.CREADO;
         List<Pedido> lista = List.of(Pedido.
                 builder().
                 id(1L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(7000)).
                 clienteId(1L).
                 repartidorId(null).
@@ -719,7 +554,7 @@ public class TestPedidoServiceAplication {
                 builder().
                 id(2L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(8990)).
                 clienteId(1L).
                 repartidorId(null).
@@ -728,38 +563,25 @@ public class TestPedidoServiceAplication {
 
         when(repository.findByEstadoPedido(estadoPedido)).thenReturn(lista);
 
-        var result = aplication.obtenerPorEstado(estadoPedido);
+        var result = application.obtenerPorEstado(estadoPedido);
 
         assertNotNull(result);
-        assertEquals(2L,result.size());
-        assertEquals(EstadoPedido.CREADO,result.getFirst().getEstadoPedido());
+        assertEquals(2L, result.size());
+        assertEquals(EstadoPedido.CREADO, result.getFirst().getEstadoPedido());
 
         verify(repository).findByEstadoPedido(estadoPedido);
-    }
-
-    @Test
-    void shouldThrowExceptionStatusIsNull_GetByStatus(){
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                ()-> aplication.obtenerPorEstado(null));
-
-        log.info(exception.getMessage());
-        assertEquals("El ESTADO del pedido es obligatorio",exception.getMessage());
-
-        verify(repository, never()).findByEstadoPedido(any());
-
     }
 
     //Get By IdOrders
 
     @Test
-    void shouldGetOrderByIdSuccessfully(){
+    void shouldGetOrderByIdSuccessfully() {
 
         var order = Pedido.
                 builder().
                 id(2L).
                 estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
+                fecha(LocalDateTime.of(2026, 1, 1, 10, 0)).
                 total(BigDecimal.valueOf(8990)).
                 clienteId(1L).
                 repartidorId(null).
@@ -768,36 +590,15 @@ public class TestPedidoServiceAplication {
 
         when(repository.findById(order.getId())).thenReturn(Optional.of(order));
 
-        var result = aplication.buscarPorId(order.getId());
+        var result = application.buscarPorId(order.getId());
 
         assertNotNull(result);
-        assertEquals(EstadoPedido.CREADO,result.getEstadoPedido());
-        assertEquals(2L,result.getId());
-        assertEquals(1L,result.getClienteId());
-        assertEquals(2L,result.getRestauranteId());
+        assertEquals(EstadoPedido.CREADO, result.getEstadoPedido());
+        assertEquals(2L, result.getId());
+        assertEquals(1L, result.getClienteId());
+        assertEquals(2L, result.getRestauranteId());
 
         verify(repository).findById(order.getId());
     }
 
-    @Test
-    void shouldThrowExceptionOrderIdIsNull_GetById(){
-        var order = Pedido.
-                builder().
-                id(null).
-                estadoPedido(EstadoPedido.CREADO).
-                fecha(LocalDateTime.of(2026,1,1,10,0)).
-                total(BigDecimal.valueOf(8990)).
-                clienteId(1L).
-                repartidorId(null).
-                restauranteId(2L).
-                build();
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                ()-> aplication.buscarPorId(order.getId()));
-
-        log.info(exception.getMessage());
-        assertEquals("El ID del pedido es obligatorio",exception.getMessage());
-
-        verify(repository,never()).findById(any());
-    }
 }

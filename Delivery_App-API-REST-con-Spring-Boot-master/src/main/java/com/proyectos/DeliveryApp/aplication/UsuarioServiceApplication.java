@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class UsuarioServiceAplication implements UsuarioService {
+public class UsuarioServiceApplication implements UsuarioService {
 
   private final UsuarioRepositoryOutPorts usuarioRepository;
 
@@ -36,9 +36,6 @@ public class UsuarioServiceAplication implements UsuarioService {
 
     @Override
     public Usuario actualizarRol(Long id, Rol rolActualizado) {
-        if (id == null ){
-            throw  new IllegalArgumentException("El ID es obligatorio");
-        }
 
         if (rolActualizado == null){
             throw new IllegalArgumentException("El ROL es obligatorio");
@@ -66,9 +63,6 @@ public class UsuarioServiceAplication implements UsuarioService {
 
     @Override
     public Usuario buscarPorId(Long id) {
-        if (id == null){
-            throw new IllegalArgumentException("El ID es obligatorio");
-        }
          return usuarioRepository.
                 findById(id).orElseThrow(() -> new UsuarioNoEncontradoException(id));
     }

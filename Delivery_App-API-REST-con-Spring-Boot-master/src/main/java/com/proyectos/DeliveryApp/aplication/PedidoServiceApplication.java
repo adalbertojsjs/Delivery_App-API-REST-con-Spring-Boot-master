@@ -17,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class PedidoServiceAplication implements PedidoService {
+public class PedidoServiceApplication implements PedidoService {
 
    private final PedidoRepositoryOutPorts repository;
    private final UsuarioRepositoryOutPorts usuarioRepository;
@@ -44,7 +44,7 @@ public class PedidoServiceAplication implements PedidoService {
 
         }
 
-        Usuario cliente = usuarioRepository.findById(pedido.getClienteId())
+        var cliente = usuarioRepository.findById(pedido.getClienteId())
                 .orElseThrow(() -> new UsuarioNoEncontradoException(pedido.getClienteId()));
 
         pedido.setClienteId(cliente.getId());
@@ -58,11 +58,7 @@ public class PedidoServiceAplication implements PedidoService {
 
     @Override
     public Pedido cancelar(Long id) {
-        if (id == null){
-            throw  new IllegalStateException("El ID es obligatorio");
-        }
-
-        Pedido pedido1 = repository.findById(id).
+        var pedido1 = repository.findById(id).
                 orElseThrow(() -> new PedidoNoEncontradoException(id));
 
         pedido1.setEstadoPedido(EstadoPedido.CANCELADO);
@@ -71,10 +67,8 @@ public class PedidoServiceAplication implements PedidoService {
 
     @Override
     public Pedido cambiarEstado(Long id, EstadoPedido estado) {
-        if (id == null){
-            throw  new IllegalStateException("El ID es obligatorio");
-        }
-        Pedido pedido = repository.findById(id).
+
+        var pedido = repository.findById(id).
                 orElseThrow(() -> new PedidoNoEncontradoException(id));
 
         if(pedido.getEstadoPedido() == EstadoPedido.ENTREGADO ||
@@ -89,14 +83,8 @@ public class PedidoServiceAplication implements PedidoService {
 
     @Override
     public Pedido asignarRepartidor(Long pedidoId, Long repartidorId) {
-        if (pedidoId == null) {
-            throw new IllegalArgumentException("El ID del pedido es obligatorio");
-        }
-        if (repartidorId == null) {
-            throw new IllegalArgumentException("El ID del repartidor es obligatorio");
-        }
 
-        Pedido pedido = repository.findById(pedidoId)
+        var pedido = repository.findById(pedidoId)
                 .orElseThrow(() -> new PedidoNoEncontradoException(pedidoId));
 
         if (pedido.getEstadoPedido() == EstadoPedido.CANCELADO ||
@@ -108,7 +96,7 @@ public class PedidoServiceAplication implements PedidoService {
             throw new IllegalArgumentException("El pedido ya tiene repartidor asignado");
         }
 
-        Usuario repartidor = usuarioRepository.findById(repartidorId)
+        var repartidor = usuarioRepository.findById(repartidorId)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(repartidorId));
 
         if (repartidor.getRol() != Rol.REPARTIDOR) {
@@ -122,18 +110,12 @@ public class PedidoServiceAplication implements PedidoService {
 
     @Override
     public List<Pedido> obtenerPedidosPorCliente(Long clienteId) {
-        if(clienteId == null){
-            throw new IllegalArgumentException("El ID del cliente es obligatorio");
-        }
+
         return repository.findByClienteId(clienteId);
     }
 
     @Override
     public List<Pedido> obtenerPedidosPorRestaurante(Long restauranteId) {
-
-        if (restauranteId == null){
-            throw new IllegalArgumentException("El ID del restaurante es obligatorio");
-        }
 
         return repository.findByRestauranteId(restauranteId);
     }
@@ -141,18 +123,12 @@ public class PedidoServiceAplication implements PedidoService {
     @Override
     public List<Pedido> obtenerPorEstado(EstadoPedido estado) {
 
-        if (estado == null){
-        throw new IllegalArgumentException("El ESTADO del pedido es obligatorio");
-        }
-
         return repository.findByEstadoPedido(estado);
     }
 
     @Override
     public Pedido buscarPorId(Long id) {
-        if(id == null){
-            throw new IllegalArgumentException("El ID del pedido es obligatorio");
-        }
+
         return repository.findById(id)
                 .orElseThrow(() -> new PedidoNoEncontradoException(id));
     }
