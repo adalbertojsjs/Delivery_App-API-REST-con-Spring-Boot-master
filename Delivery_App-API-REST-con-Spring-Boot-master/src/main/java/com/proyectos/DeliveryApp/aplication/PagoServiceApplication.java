@@ -78,10 +78,6 @@ public class PagoServiceApplication implements PagoService {
     @Override
     public Pago buscarPagoId(Long id){
 
-        if (id == null){
-            throw  new IllegalArgumentException("EL id no puede ser nulo");
-        }
-
         var pago = pagoRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("El pago no fue encontrado"));
 

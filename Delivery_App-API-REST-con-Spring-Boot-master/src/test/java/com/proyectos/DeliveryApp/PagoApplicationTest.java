@@ -148,7 +148,7 @@ public class PagoApplicationTest {
 
         when(pedidoRepository.findById(pedido.getId())).thenReturn(Optional.of(pedido));
 
-      IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+      var exception = assertThrows(IllegalArgumentException.class,
                 () -> aplication.Pagar(pedido.getId(),pago));
 
       log.info(exception.getMessage());
@@ -174,14 +174,14 @@ public class PagoApplicationTest {
 
         when(pedidoRepository.findById(id)).thenReturn(Optional.empty());
 
-        PedidoNoEncontradoException exception = assertThrows(PedidoNoEncontradoException.class,
+        var exception = assertThrows(PedidoNoEncontradoException.class,
                 ()-> aplication.Pagar(id,pago));
 
         log.info(exception.getMessage());
 
         assertEquals("Pedido con id " + id + " no fue encontrado",exception.getMessage());
 
-        verify(pedidoRepository).findById(id);
+        verify(pedidoRepository, times(1)).findById(id);
         verify(repository,never()).save(any());
         verify(pedidoRepository, never()).save(any());
     }
@@ -220,27 +220,6 @@ public class PagoApplicationTest {
     }
 
 
-    @Test
-    void shouldThrowExceptionWhenPaymentIsNull(){
-
-        var pago = Pago.
-                builder().
-                id(null).
-                pedidoId(1L).
-                costoFinal(BigDecimal.valueOf(2222)).
-                nombreComprador("random999").
-                numeroTarjeta("484344744").
-                build();
-
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                ()-> aplication.buscarPagoId(pago.getId()));
-
-        log.info(exception.getMessage());
-
-        assertEquals("EL id no puede ser nulo",exception.getMessage());
-        verify(repository, never()).findById(any());
-    }
 
     @Test
     void shouldThrowPaymentNotFoundException(){
@@ -249,7 +228,7 @@ public class PagoApplicationTest {
 
         when(repository.findById(id)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        var exception = assertThrows(IllegalArgumentException.class,
                 () -> aplication.buscarPagoId(id));
 
         log.info(exception.getMessage());

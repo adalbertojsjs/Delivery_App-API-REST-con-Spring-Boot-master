@@ -3,12 +3,11 @@ package com.proyectos.DeliveryApp.aplication;
 import com.proyectos.DeliveryApp.domain.Exception.PedidoNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.Exception.UsuarioNoEncontradoException;
 import com.proyectos.DeliveryApp.domain.enums.EstadoPedido;
+import com.proyectos.DeliveryApp.domain.enums.Rol;
 import com.proyectos.DeliveryApp.domain.model.Pedido;
-import com.proyectos.DeliveryApp.domain.model.Usuario;
+import com.proyectos.DeliveryApp.domain.ports.in.PedidoService;
 import com.proyectos.DeliveryApp.domain.ports.out.PedidoRepositoryOutPorts;
 import com.proyectos.DeliveryApp.domain.ports.out.UsuarioRepositoryOutPorts;
-import com.proyectos.DeliveryApp.domain.enums.Rol;
-import com.proyectos.DeliveryApp.domain.ports.in.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
